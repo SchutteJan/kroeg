@@ -15,8 +15,8 @@ let showLogin: boolean = false
       <li>🍺</li>
     </ul>
     <ul>
-      <li><a href="#">Kroegen</a></li>
-      <li><a href="#" role="button" on:click={() => showLogin = !showLogin}>Login</a></li>
+      <li><a href="#" class="contrast">Kroegen</a></li>
+      <li><button class="secondary" on:click={() => showLogin = !showLogin}>Login</button></li>
     </ul>
   </nav>
 

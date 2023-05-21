@@ -11,7 +11,7 @@ cargo run
 
 Diesel ORM:
 ```bash
-cargo install diesel_cli
+cargo install diesel_cli --no-default-features --features postgres
 ```
 
 

@@ -15,8 +15,8 @@ const url = "/"
       <li><Link class="contrast" to="/login">Login</Link></li>
     </ul>
 </nav>
-  <div>
+<main class="container">
     <Route path="/" component={Home} />
     <Route path="/login" component={Login} />
-  </div>
+</main>
 </Router>

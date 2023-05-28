@@ -1,24 +1,30 @@
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
+extern crate diesel;
+
 pub mod models;
 pub mod schema;
 pub mod db;
 
-use models::Post;
+
+use models::Location;
 use db::Db;
-use diesel::prelude::*;
+
+use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::serde::json::Json;
 
 
 #[get("/")]
-async fn index(connection: Db) -> Json<Vec<Post>> {
-    use self::schema::posts::dsl::*;
-    
-    connection
-        .run(|conn| posts.filter(published.eq(true)).limit(5).load(conn))
-        .await
-        .map(Json)
-        .expect("Failed to fetch posts")
+async fn index(conn: Db) -> Json<Vec<Location>> {
+    use schema::locations::dsl::*;
+
+    let result = conn.run(|c| 
+        locations.filter(published.eq(true)).load(c)
+    );
+    result.await.map(Json).expect("A result")
 }
+
+
 
 #[launch]
 fn rocket() -> _ {

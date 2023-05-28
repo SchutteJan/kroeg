@@ -1,2 +1,2 @@
-[default.databases.diesel_demo]
-url = "postgres://postgres:example@localhost/diesel_demo"
+[default.databases.webapp]
+url = "postgres://postgres:example@localhost/webapp"

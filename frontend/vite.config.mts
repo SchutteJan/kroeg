@@ -5,6 +5,8 @@ import autoprefixer from "https://jspm.dev/autoprefixer"
 import postcssNesting from 'npm:postcss-nesting@11.2.2'
 
 import 'npm:svelte@^3.54.0'
+import * as _router from 'npm:svelte-routing@1.8.9'
+
 
 // https://vitejs.dev/config/
 export default defineConfig({

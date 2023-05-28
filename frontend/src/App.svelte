@@ -1,31 +1,22 @@
 <script lang="ts">
-import LoginForm from './lib/LoginForm.svelte'
+import Login from './routes/Login.svelte'
+import Home from './routes/Home.svelte'
+import { Router, Link, Route } from 'svelte-routing'
 
-let showLogin: boolean = false
+const url = "/"
 </script>
 
-{#if showLogin}
-<dialog open>
-    <LoginForm />
-</dialog>
-{/if}
-
-<nav class="container-fluid">
+<Router {url}>
+  <nav class="container-fluid">
     <ul>
-      <li>🍺</li>
+      <li><Link to="/">🍺</Link></li>
     </ul>
     <ul>
-      <li><a href="#" class="contrast">Kroegen</a></li>
-      <li><button class="secondary" on:click={() => showLogin = !showLogin}>Login</button></li>
+      <li><Link class="contrast" to="/login">Login</Link></li>
     </ul>
-  </nav>
-
-<header class="container">
-    <hgroup>
-        <h1>Alle kroegen</h1>
-        <p>
-        Zie hier beneden een lijst van alle kroegen in Amsterdam
-        </p>
-    </hgroup>
-</header>
-
+</nav>
+  <div>
+    <Route path="/" component={Home} />
+    <Route path="/login" component={Login} />
+  </div>
+</Router>

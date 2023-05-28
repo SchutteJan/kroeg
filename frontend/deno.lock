@@ -234,6 +234,8 @@
     "specifiers": {
       "@sveltejs/vite-plugin-svelte@^2.0.2": "@sveltejs/vite-plugin-svelte@2.2.0_svelte@3.59.1_vite@4.3.8",
       "postcss-nesting@11.2.2": "postcss-nesting@11.2.2_postcss@8.4.23_postcss-selector-parser@6.0.13",
+      "svelte-routing": "svelte-routing@1.8.9",
+      "svelte-routing@1.8.9": "svelte-routing@1.8.9",
       "svelte@^3.54.0": "svelte@3.59.1",
       "vite": "vite@4.3.8",
       "vite@^4.0.4": "vite@4.3.8"
@@ -455,6 +457,10 @@
         "dependencies": {
           "svelte": "svelte@3.59.1"
         }
+      },
+      "svelte-routing@1.8.9": {
+        "integrity": "sha512-4+J1F57sKkI5+d5nhCQs2ChPo9tn0gIFqFaA38c+yNYZ5UzsGq80mCVA2E0tqPtkO2VzZTJD0Lw2P8N3Z/068g==",
+        "dependencies": {}
       },
       "svelte@3.59.1": {
         "integrity": "sha512-pKj8fEBmqf6mq3/NfrB9SLtcJcUvjYSWyePlfCqN9gujLB25RitWK8PvFzlwim6hD/We35KbPlRteuA6rnPGcQ==",

@@ -5,7 +5,7 @@
   <div>
     <hgroup>
       <h1>Login</h1>
-      <h2>Hou bij welke kroegen je al bezocht hebt!</h2>
+      <h2>Keep track of the bars you've visited</h2>
 
     </hgroup>
     <form>

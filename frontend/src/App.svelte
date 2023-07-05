@@ -12,7 +12,8 @@ const url = "/"
       <li><Link to="/">🍺</Link></li>
     </ul>
     <ul>
-      <li><Link class="contrast" to="/login">Login</Link></li>
+      <!-- Disable link to login until implemented on backend -->
+      <!-- <li><Link class="contrast" to="/login">Login</Link></li> -->
     </ul>
 </nav>
 <main class="container">

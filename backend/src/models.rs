@@ -1,8 +1,9 @@
 use diesel::prelude::*;
 use postgis_diesel::types::Point;
 use serde::{Serialize, Deserialize};
+use schemars::JsonSchema;
 
-#[derive(Queryable,Serialize, Deserialize)]
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct Location {
     pub id: i32,
     pub name: String,
@@ -11,4 +12,21 @@ pub struct Location {
     pub description: Option<String>,
     pub osm_node_id: Option<String>,
     pub google_place_id: Option<String>
+}
+
+#[derive(Serialize, JsonSchema)]
+pub struct LocationResponse {
+    pub id: i32,
+    pub name: String,
+    pub description: Option<String>
+}
+
+impl From<Location> for LocationResponse {
+    fn from(l: Location) -> Self {
+        Self {
+            id: l.id,
+            name: l.name,
+            description: l.description
+        }
+    }
 }

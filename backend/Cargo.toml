@@ -2,8 +2,18 @@
 name = "backend"
 version = "0.1.0"
 edition = "2021"
+default-run = "server"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "server"
+path = "src/main.rs"
+
+[[bin]]
+name = "export-schemas"
+path = "src/export_schemas.rs"
+
 
 [dependencies]
 serde = "1.0.163"

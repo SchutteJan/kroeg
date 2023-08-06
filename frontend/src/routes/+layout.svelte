@@ -1,6 +1,5 @@
 <script>
-    import "@picocss/pico"
+	import '@picocss/pico';
 </script>
 
-<slot/>
-
+<slot />

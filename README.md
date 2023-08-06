@@ -36,5 +36,5 @@ cargo build --bin export-schemas
 Build the frontend
 ```bash
 cd frontend/
-deno task dev
+npm run dev
 ```

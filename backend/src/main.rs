@@ -24,7 +24,8 @@ async fn index() -> String {
 }
 
 #[get("/bars")]
-async fn bars(conn: Db) -> Json<Vec<Location>> { // TODO: Return Json<Vec<LocationResponse>> instead
+async fn bars(conn: Db) -> Json<Vec<Location>> {
+    // TODO: Return Json<Vec<LocationResponse>> instead
     use schema::locations::dsl::*;
 
     let result = conn.run(|c| locations.filter(published.eq(true)).load(c));

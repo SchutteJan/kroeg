@@ -2,10 +2,9 @@ extern crate rocket;
 
 pub mod models;
 
-use rocket::serde::json::serde_json;
 use models::LocationResponse;
+use rocket::serde::json::serde_json;
 use schemars::schema_for;
-
 
 fn main() {
     let schema = schema_for!(LocationResponse);

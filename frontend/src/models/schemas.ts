@@ -6,8 +6,8 @@
  */
 
 export interface LocationResponse {
-  description?: string | null;
-  id: number;
-  name: string;
-  [k: string]: unknown;
+	description?: string | null;
+	id: number;
+	name: string;
+	[k: string]: unknown;
 }

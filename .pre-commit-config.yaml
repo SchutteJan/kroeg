@@ -14,3 +14,13 @@ repos:
         args: ["--manifest-path", "./backend/Cargo.toml", "--"]
     -   id: cargo-check
         args: ["--manifest-path", "./backend/Cargo.toml", "--"]
+
+-   repo: local
+    hooks:
+    -   id: prettier
+        name: Prettier
+        description: Format Svelte/TS code using prettier
+        entry: npm run format --prefix frontend
+        language: node
+        files: \.(ts|js|svelte|html)$
+        pass_filenames: false

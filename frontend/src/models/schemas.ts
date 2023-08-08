@@ -6,8 +6,14 @@
  */
 
 export interface LocationResponse {
+	coordinates: Coordinate;
 	description?: string | null;
 	id: number;
 	name: string;
+	[k: string]: unknown;
+}
+export interface Coordinate {
+	x: number;
+	y: number;
 	[k: string]: unknown;
 }

@@ -15,10 +15,27 @@ pub struct Location {
 }
 
 #[derive(Serialize, JsonSchema)]
+pub struct Coordinate {
+    pub x: f64,
+    pub y: f64,
+}
+
+#[derive(Serialize, JsonSchema)]
 pub struct LocationResponse {
     pub id: i32,
     pub name: String,
     pub description: Option<String>,
+    pub coordinates: Coordinate,
+}
+
+// TODO(jans): Implement traits for Serde and JsonSchema for Point type
+impl From<Point> for Coordinate {
+    fn from(value: Point) -> Self {
+        Self {
+            x: value.x,
+            y: value.y,
+        }
+    }
 }
 
 impl From<&Location> for LocationResponse {
@@ -27,6 +44,7 @@ impl From<&Location> for LocationResponse {
             id: l.id,
             name: l.name.clone(),
             description: l.description.clone(),
+            coordinates: Coordinate::from(l.coordinates),
         }
     }
 }

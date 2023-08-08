@@ -9,7 +9,9 @@ pub mod schema;
 use db::Db;
 use models::{Location, LocationResponse};
 
+use diesel::result::Error;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
+
 use rocket::serde::json::Json;
 
 use rocket::fairing::{Fairing, Info, Kind};
@@ -23,14 +25,20 @@ async fn index() -> String {
     "Try /bars".to_string()
 }
 
-#[get("/bars")]
-async fn bars(conn: Db) -> Json<Vec<Location>> {
-    // TODO: Return Json<Vec<LocationResponse>> instead
+async fn get_bars(conn: Db) -> Result<Vec<Location>, Error> {
     use schema::locations::dsl::*;
 
-    let result = conn.run(|c| locations.filter(published.eq(true)).load(c));
+    conn.run(|c| locations.filter(published.eq(true)).load(c))
+        .await
+}
 
-    result.await.map(Json).expect("A result")
+#[get("/bars")]
+async fn bars(conn: Db) -> Json<Vec<LocationResponse>> {
+    let bars: Vec<Location> = get_bars(conn).await.expect("has values");
+
+    let response = bars.iter().map(|l| LocationResponse::from(l)).collect();
+
+    Json(response)
 }
 
 #[rocket::async_trait]

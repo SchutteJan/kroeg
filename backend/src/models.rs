@@ -21,12 +21,12 @@ pub struct LocationResponse {
     pub description: Option<String>,
 }
 
-impl From<Location> for LocationResponse {
-    fn from(l: Location) -> Self {
+impl From<&Location> for LocationResponse {
+    fn from(l: &Location) -> Self {
         Self {
             id: l.id,
-            name: l.name,
-            description: l.description,
+            name: l.name.clone(),
+            description: l.description.clone(),
         }
     }
 }

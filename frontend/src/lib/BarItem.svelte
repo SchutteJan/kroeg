@@ -1,16 +1,14 @@
 <script lang="ts">
-	import type { Coordinate } from '../models/schemas';
+	import type { LocationResponse } from '../models/schemas';
 
-	export let name: string;
-	export let description: string;
-	export let coordinates: Coordinate;
+	export let bar: LocationResponse;
 </script>
 
 <div>
 	<b>Name:</b>
-	{name} <br />
+	{bar.name} <br />
 	<b>Description:</b>
-	{description} <br />
+	{bar.description ?? 'No Description'} <br />
 	<b>Coords:</b>
-	x: {coordinates.x}, y: {coordinates.y}
+	x: {bar.coordinates.x}, y: {bar.coordinates.y}
 </div>

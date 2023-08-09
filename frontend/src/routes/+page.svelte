@@ -35,11 +35,7 @@
 				<progress />
 			{:else}
 				{#each bars as bar}
-					<BarItem
-						coordinates={bar.coordinates}
-						name={bar.name}
-						description={bar.description ?? 'No Description'}
-					/>
+					<BarItem {bar} />
 				{/each}
 			{/if}
 		</div>

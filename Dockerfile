@@ -20,7 +20,7 @@ RUN cat schemas.jsonschema | npx json-schema-to-typescript > src/models/schemas.
 
 RUN npm run build
 
-FROM debian:bookworm
+FROM debian:bookworm-slim
 
 WORKDIR /opt/kroeg
 
@@ -32,6 +32,5 @@ COPY --from=build-backend /home/app/target/release/server server
 COPY --from=build-frontend /home/app/build static
 
 COPY backend/Rocket.toml .
-#RUN printf '[default.databases.webapp]\nurl = "postgres://postgres:example@db/webapp"' > Rocket.toml
 
 CMD ["/opt/kroeg/server"]

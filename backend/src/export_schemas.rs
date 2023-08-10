@@ -1,8 +1,7 @@
+extern crate kroeg;
 extern crate rocket;
 
-pub mod models;
-
-use models::LocationResponse;
+use kroeg::models::LocationResponse;
 use rocket::serde::json::serde_json;
 use schemars::schema_for;
 

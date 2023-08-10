@@ -1,15 +1,13 @@
 #[macro_use]
 extern crate rocket;
 extern crate diesel;
+extern crate kroeg;
 
-pub mod db;
-pub mod models;
-pub mod schema;
-
-use db::Db;
-use models::{Location, LocationResponse};
+use kroeg::db::Db;
+use kroeg::models::{Location, LocationResponse, NewLocation};
 
 use diesel::result::Error;
+use diesel::SelectableHelper;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 
 use rocket::serde::json::Json;
@@ -23,7 +21,7 @@ use serde::Deserialize;
 pub struct CORS;
 
 async fn get_bars(conn: Db) -> Result<Vec<Location>, Error> {
-    use schema::locations::dsl::*;
+    use kroeg::schema::locations::dsl::*;
 
     conn.run(|c| locations.filter(published.eq(true)).load(c))
         .await
@@ -36,6 +34,38 @@ async fn bars(conn: Db) -> Json<Vec<LocationResponse>> {
     let response = bars.iter().map(|l| LocationResponse::from(l)).collect();
 
     Json(response)
+}
+
+#[post("/bar", data = "<bar>")]
+async fn add_bar(conn: Db, bar: Json<NewLocation>) -> Json<LocationResponse> {
+    // TODO: Find a better way of processing all of these structures
+    use kroeg::models::Point;
+    use kroeg::schema::locations;
+
+    let coordinate = Point {
+        x: bar.coordinates.x,
+        y: bar.coordinates.y,
+        srid: Some(4326),
+    };
+    let new_bar = NewLocation {
+        name: bar.name.clone(),
+        coordinates: coordinate,
+        published: bar.published,
+        description: bar.description.clone(),
+        osm_node_id: bar.osm_node_id.clone(),
+        google_place_id: bar.google_place_id.clone(),
+    };
+
+    let in_db = conn
+        .run(|conn| {
+            diesel::insert_into(locations::table)
+                .values(new_bar)
+                .returning(Location::as_returning())
+                .get_result(conn)
+        })
+        .await;
+
+    Json(LocationResponse::from(&in_db.expect("Inserted")))
 }
 
 #[rocket::async_trait]
@@ -76,6 +106,6 @@ fn rocket() -> _ {
     rocket
         .attach(Db::fairing())
         .attach(CORS)
-        .mount("/", routes![bars])
+        .mount("/", routes![bars, add_bar])
         .mount("/", FileServer::from(config.static_file_path))
 }

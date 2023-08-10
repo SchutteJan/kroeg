@@ -1,9 +1,12 @@
+use crate::schema::locations;
+
 use diesel::prelude::*;
-use postgis_diesel::types::Point;
+pub use postgis_diesel::types::Point;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Serialize, Deserialize)]
+#[derive(Queryable, Selectable, Serialize, Deserialize)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Location {
     pub id: i32,
     pub name: String,
@@ -14,7 +17,7 @@ pub struct Location {
     pub google_place_id: Option<String>,
 }
 
-#[derive(Serialize, JsonSchema)]
+#[derive(Deserialize, Serialize, JsonSchema)]
 pub struct Coordinate {
     pub x: f64,
     pub y: f64,
@@ -28,7 +31,18 @@ pub struct LocationResponse {
     pub coordinates: Coordinate,
 }
 
-// TODO(jans): Implement traits for Serde and JsonSchema for Point type
+#[derive(Deserialize, Insertable)]
+#[diesel(table_name = locations)]
+pub struct NewLocation {
+    pub name: String,
+    pub coordinates: Point,
+    pub published: bool,
+    pub description: Option<String>,
+    pub osm_node_id: Option<String>,
+    pub google_place_id: Option<String>,
+}
+
+// TODO: Implement traits for Serde and JsonSchema for Point type
 impl From<Point> for Coordinate {
     fn from(value: Point) -> Self {
         Self {

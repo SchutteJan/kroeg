@@ -15,15 +15,11 @@ use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::serde::json::Json;
 
 use rocket::fairing::{Fairing, Info, Kind};
+use rocket::fs::{relative, FileServer};
 use rocket::http::Header;
 use rocket::{Request, Response};
 
 pub struct CORS;
-
-#[get("/")]
-async fn index() -> String {
-    "Try /bars".to_string()
-}
 
 async fn get_bars(conn: Db) -> Result<Vec<Location>, Error> {
     use schema::locations::dsl::*;
@@ -66,5 +62,6 @@ fn rocket() -> _ {
     rocket::build()
         .attach(Db::fairing())
         .attach(CORS)
-        .mount("/", routes![index, bars])
+        .mount("/", routes![bars])
+        .mount("/", FileServer::from(relative!("static")))
 }

@@ -7,7 +7,7 @@
 	let loading = true;
 
 	onMount(async () => {
-		const res = await fetch('http://localhost:8000/bars', {
+		const res = await fetch('/bars', {
 			method: 'GET'
 		});
 		bars = await res.json();

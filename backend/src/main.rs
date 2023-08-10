@@ -15,7 +15,7 @@ use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::serde::json::Json;
 
 use rocket::fairing::{Fairing, Info, Kind};
-use rocket::fs::{relative, FileServer};
+use rocket::fs::FileServer;
 use rocket::http::Header;
 use rocket::{Request, Response};
 
@@ -63,5 +63,5 @@ fn rocket() -> _ {
         .attach(Db::fairing())
         .attach(CORS)
         .mount("/", routes![bars])
-        .mount("/", FileServer::from(relative!("static")))
+        .mount("/", FileServer::from("static"))
 }

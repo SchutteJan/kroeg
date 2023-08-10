@@ -1,13 +1,10 @@
 #[macro_use]
 extern crate rocket;
 extern crate diesel;
+extern crate kroeg;
 
-pub mod db;
-pub mod models;
-pub mod schema;
-
-use db::Db;
-use models::{Location, LocationResponse};
+use kroeg::db::Db;
+use kroeg::models::{Location, LocationRequest, LocationResponse};
 
 use diesel::result::Error;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -23,7 +20,7 @@ use serde::Deserialize;
 pub struct CORS;
 
 async fn get_bars(conn: Db) -> Result<Vec<Location>, Error> {
-    use schema::locations::dsl::*;
+    use kroeg::schema::locations::dsl::*;
 
     conn.run(|c| locations.filter(published.eq(true)).load(c))
         .await
@@ -36,6 +33,13 @@ async fn bars(conn: Db) -> Json<Vec<LocationResponse>> {
     let response = bars.iter().map(|l| LocationResponse::from(l)).collect();
 
     Json(response)
+}
+
+#[post("/bar", data = "<bar>")]
+async fn add_bar(conn: Db, bar: Json<LocationRequest>) -> String {
+    // conn.run(|conn| )
+
+    String::from(bar.name.clone())
 }
 
 #[rocket::async_trait]
@@ -76,6 +80,6 @@ fn rocket() -> _ {
     rocket
         .attach(Db::fairing())
         .attach(CORS)
-        .mount("/", routes![bars])
+        .mount("/", routes![bars, add_bar])
         .mount("/", FileServer::from(config.static_file_path))
 }

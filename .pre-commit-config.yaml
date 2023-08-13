@@ -24,3 +24,9 @@ repos:
         language: node
         files: \.(ts|js|svelte|html)$
         pass_filenames: false
+    -   id: typecheck
+        name: Typechecking
+        description: Typecheck TypeScript files
+        entry: npm run check --prefix frontend
+        language: node
+        files: \.(ts|svelte)$

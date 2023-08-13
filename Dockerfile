@@ -16,7 +16,7 @@ COPY frontend .
 RUN npm install
 
 COPY --from=build-backend home/app/schemas.jsonschema .
-RUN cat schemas.jsonschema | npx json-schema-to-typescript > src/models/schemas.ts
+RUN cat schemas.jsonschema | npx json2ts --additionalProperties false > src/models/schemas.ts
 
 RUN npm run build
 

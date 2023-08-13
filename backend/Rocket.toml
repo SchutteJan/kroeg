@@ -1,11 +1,16 @@
-[default.databases.webapp]
-url = "postgres://postgres:example@db/webapp"
-
 [debug]
-address = "localhost"
+address = "127.0.0.1"
 port = 8000
+static_file_path = "../frontend/build"
+
+[debug.databases.webapp]
+url = "postgres://postgres:example@localhost/webapp"
 
 
 [release]
 address = "0.0.0.0"
 port = 8000
+static_file_path = "static"
+
+[release.databases.webapp]
+url = "postgres://postgres:example@db/webapp"

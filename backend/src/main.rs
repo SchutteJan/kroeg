@@ -18,6 +18,7 @@ use rocket::fairing::{Fairing, Info, Kind};
 use rocket::fs::FileServer;
 use rocket::http::Header;
 use rocket::{Request, Response};
+use serde::Deserialize;
 
 pub struct CORS;
 
@@ -57,11 +58,24 @@ impl Fairing for CORS {
     }
 }
 
+#[derive(Deserialize)]
+#[serde(crate = "rocket::serde")]
+struct Config {
+    static_file_path: String,
+}
+
 #[launch]
 fn rocket() -> _ {
-    rocket::build()
+    let rocket = rocket::build();
+    let figment = rocket.figment();
+
+    let config: Config = figment.extract().expect("config");
+
+    println!("Serving static files from '{}'", config.static_file_path);
+
+    rocket
         .attach(Db::fairing())
         .attach(CORS)
         .mount("/", routes![bars])
-        .mount("/", FileServer::from("static"))
+        .mount("/", FileServer::from(config.static_file_path))
 }

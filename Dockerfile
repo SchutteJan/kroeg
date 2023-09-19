@@ -4,9 +4,8 @@ WORKDIR /home/app
 
 COPY backend .
 
-RUN cargo build --release
-
-RUN target/release/export-schemas > schemas.jsonschema
+RUN cargo build --release && \
+    target/release/export-schemas > schemas.jsonschema
 
 FROM node:20.5.1 as build-frontend
 
@@ -16,16 +15,17 @@ COPY frontend .
 RUN npm install
 
 COPY --from=build-backend home/app/schemas.jsonschema .
-RUN cat schemas.jsonschema | npx json2ts --additionalProperties false > src/models/schemas.ts
 
-RUN npm run build
+RUN npx json2ts --additionalProperties false -i schemas.jsonschema -o src/models/schemas.ts && \
+    npm run build
+
 
 FROM debian:bookworm-slim
 
 WORKDIR /opt/kroeg
 
 RUN apt-get update \
-    && apt-get install -y libpq5 \
+    && apt-get install -y --no-install-recommends libpq5=15.3-0+deb12u1 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build-backend /home/app/target/release/server server

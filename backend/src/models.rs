@@ -1,9 +1,9 @@
-use crate::schema::locations;
-
 use diesel::prelude::*;
 pub use postgis_diesel::types::Point;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+
+use crate::schema::locations;
 
 #[derive(Queryable, Selectable, Serialize, Deserialize)]
 #[diesel(check_for_backend(diesel::pg::Pg))]

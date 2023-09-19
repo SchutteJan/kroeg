@@ -3,18 +3,15 @@ extern crate rocket;
 extern crate diesel;
 extern crate kroeg;
 
-use kroeg::db::Db;
-use kroeg::models::{Location, LocationResponse, NewLocation};
-
 use diesel::result::Error;
 use diesel::SelectableHelper;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
-
-use rocket::serde::json::Json;
-
+use kroeg::db::Db;
+use kroeg::models::{Location, LocationResponse, NewLocation};
 use rocket::fairing::{Fairing, Info, Kind};
 use rocket::fs::FileServer;
 use rocket::http::Header;
+use rocket::serde::json::Json;
 use rocket::{Request, Response};
 use serde::Deserialize;
 

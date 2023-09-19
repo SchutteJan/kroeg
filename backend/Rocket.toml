@@ -1,6 +1,6 @@
 [debug]
 address = "127.0.0.1"
-port = 8000
+port = 8080
 static_file_path = "../frontend/build"
 
 [debug.databases.webapp]

@@ -15,6 +15,7 @@ pub struct Location {
     pub description: Option<String>,
     pub osm_node_id: Option<String>,
     pub google_place_id: Option<String>,
+    pub imageurl: Option<String>,
 }
 
 #[derive(Deserialize, Serialize, JsonSchema)]
@@ -29,6 +30,7 @@ pub struct LocationResponse {
     pub name: String,
     pub description: Option<String>,
     pub coordinates: Coordinate,
+    pub imageurl: Option<String>,
 }
 
 #[derive(Deserialize, Insertable)]
@@ -40,6 +42,7 @@ pub struct NewLocation {
     pub description: Option<String>,
     pub osm_node_id: Option<String>,
     pub google_place_id: Option<String>,
+    pub imageurl: Option<String>,
 }
 
 // TODO: Implement traits for Serde and JsonSchema for Point type
@@ -59,6 +62,7 @@ impl From<&Location> for LocationResponse {
             name: l.name.clone(),
             description: l.description.clone(),
             coordinates: Coordinate::from(l.coordinates),
+            imageurl: l.imageurl.clone(),
         }
     }
 }

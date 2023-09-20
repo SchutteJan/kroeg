@@ -2,7 +2,6 @@
 
 ## TODO
 
-- Export response schema to typescript using schemars -> jsonschema -> json-schema-to-typescript
 - Implement session based login using this example: https://github.com/SergioBenitez/Rocket/tree/master/examples/cookies
 
 ## System requirements

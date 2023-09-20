@@ -9,6 +9,7 @@ export interface LocationResponse {
 	coordinates: Coordinate;
 	description?: string | null;
 	id: number;
+	imageurl?: string | null;
 	name: string;
 }
 export interface Coordinate {

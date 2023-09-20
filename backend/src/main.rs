@@ -51,6 +51,7 @@ async fn add_bar(conn: Db, bar: Json<NewLocation>) -> Json<LocationResponse> {
         description: bar.description.clone(),
         osm_node_id: bar.osm_node_id.clone(),
         google_place_id: bar.google_place_id.clone(),
+        imageurl: bar.imageurl.clone(),
     };
 
     let in_db = conn

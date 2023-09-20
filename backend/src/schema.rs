@@ -12,6 +12,7 @@ diesel::table! {
         description -> Nullable<Text>,
         osm_node_id -> Nullable<Varchar>,
         google_place_id -> Nullable<Varchar>,
+        imageurl -> Nullable<Text>,
     }
 }
 

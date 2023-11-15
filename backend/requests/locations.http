@@ -1,5 +1,3 @@
-@base=http://localhost:8080/
-
 ### Get list of bar locations
 GET {{base}}/bars
 

@@ -1,0 +1,22 @@
+@base=http://localhost:8080/
+
+### Get list of bar locations
+GET {{base}}/bars
+
+
+### Add location
+POST {{base}}/bar
+Content-Type: application/json
+
+{
+  "name": "new location",
+  "coordinates": {
+    "x": 10,
+    "y": 10
+  },
+  "published": true,
+  "description": "Description",
+  "osm_node_id": "123ASD",
+  "google_place_id": "123ASD",
+  "imageurl": "http://placekitten.com/g/400/400"
+}

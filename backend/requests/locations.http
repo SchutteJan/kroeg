@@ -20,3 +20,12 @@ Content-Type: application/json
   "google_place_id": "123ASD",
   "imageurl": "http://placekitten.com/g/400/400"
 }
+
+### Remove location
+DELETE {{base}}/bar
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 1
+}

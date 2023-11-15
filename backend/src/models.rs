@@ -45,6 +45,11 @@ pub struct NewLocation {
     pub imageurl: Option<String>,
 }
 
+#[derive(Deserialize)]
+pub struct DeleteRequest {
+    pub id: i32,
+}
+
 // TODO: Implement traits for Serde and JsonSchema for Point type
 impl From<Point> for Coordinate {
     fn from(value: Point) -> Self {

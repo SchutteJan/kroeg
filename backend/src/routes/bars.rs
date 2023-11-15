@@ -2,7 +2,9 @@ use diesel::result::Error;
 use diesel::SelectableHelper;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use kroeg::db::Db;
-use kroeg::models::{Location, LocationResponse, NewLocation};
+use kroeg::models::{DeleteRequest, Location, LocationResponse, NewLocation};
+use kroeg::schema::locations::id;
+use rocket::http::Status;
 use rocket::serde::json::Json;
 
 async fn get_bars(conn: Db) -> Result<Vec<Location>, Error> {
@@ -54,6 +56,25 @@ async fn add_bar(conn: Db, bar: Json<NewLocation>) -> Json<LocationResponse> {
     Json(LocationResponse::from(&in_db.expect("Inserted")))
 }
 
+#[delete("/bar", data = "<bar>")]
+async fn delete_bar(conn: Db, bar: Json<DeleteRequest>) -> Status {
+    use kroeg::schema::locations;
+
+    let deleted_location = conn
+        .run(move |conn| {
+            diesel::delete(locations::table)
+                .filter(id.eq(bar.id))
+                .execute(conn)
+        })
+        .await;
+
+    match deleted_location {
+        Ok(0) => Status::NotFound,
+        Ok(_n) => Status::Ok,
+        Err(..) => Status::InternalServerError,
+    }
+}
+
 pub fn routes() -> Vec<rocket::Route> {
-    routes![add_bar, bars]
+    routes![add_bar, bars, delete_bar]
 }

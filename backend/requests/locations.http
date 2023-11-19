@@ -5,6 +5,7 @@ GET {{base}}/bars
 ### Add location
 POST {{base}}/bar
 Content-Type: application/json
+Accept: application/json
 
 {
   "name": "new location",

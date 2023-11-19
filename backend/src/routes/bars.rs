@@ -1,3 +1,4 @@
+use crate::routes::SessionUser;
 use diesel::result::Error;
 use diesel::SelectableHelper;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -24,7 +25,7 @@ async fn bars(conn: Db) -> Json<Vec<LocationResponse>> {
 }
 
 #[post("/bar", data = "<bar>")]
-async fn add_bar(conn: Db, bar: Json<NewLocation>) -> Json<LocationResponse> {
+async fn add_bar(conn: Db, bar: Json<NewLocation>, _user: SessionUser) -> Json<LocationResponse> {
     // TODO: Find a better way of processing all of these structures
     use kroeg::models::Point;
     use kroeg::schema::locations;
@@ -57,7 +58,7 @@ async fn add_bar(conn: Db, bar: Json<NewLocation>) -> Json<LocationResponse> {
 }
 
 #[delete("/bar", data = "<bar>")]
-async fn delete_bar(conn: Db, bar: Json<DeleteRequest>) -> Status {
+async fn delete_bar(conn: Db, bar: Json<DeleteRequest>, _user: SessionUser) -> Status {
     use kroeg::schema::locations;
 
     let deleted_location = conn

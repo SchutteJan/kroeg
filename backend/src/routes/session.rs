@@ -1,9 +1,9 @@
+use crate::routes::SessionUser;
 use rocket::form::Form;
 use rocket::http::{CookieJar, Status};
 use rocket::outcome::IntoOutcome;
 use rocket::request::{self, FromRequest, Request};
 use rocket::serde::json::Json;
-use serde::Serialize;
 
 #[derive(FromForm)]
 struct Login<'r> {
@@ -11,19 +11,16 @@ struct Login<'r> {
     password: &'r str,
 }
 
-#[derive(Debug, Serialize)]
-struct User(usize);
-
 #[rocket::async_trait]
-impl<'r> FromRequest<'r> for User {
+impl<'r> FromRequest<'r> for SessionUser {
     type Error = std::convert::Infallible;
 
-    async fn from_request(request: &'r Request<'_>) -> request::Outcome<User, Self::Error> {
+    async fn from_request(request: &'r Request<'_>) -> request::Outcome<SessionUser, Self::Error> {
         request
             .cookies()
             .get_private("user_id")
             .and_then(|cookie| cookie.value().parse().ok())
-            .map(User)
+            .map(SessionUser)
             .or_forward(Status::Unauthorized)
     }
 }
@@ -40,7 +37,7 @@ fn login(jar: &CookieJar<'_>, login: Form<Login<'_>>) -> Status {
 }
 
 #[get("/who")]
-fn who(user: User) -> Json<User> {
+fn who(user: SessionUser) -> Json<SessionUser> {
     Json(user)
 }
 

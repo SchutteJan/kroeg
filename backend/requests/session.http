@@ -1,0 +1,14 @@
+### Who Am I
+GET {{base}}/session/who
+Accept: application/json
+
+### Login User
+POST {{base}}/session/login
+Content-Type: application/x-www-form-urlencoded
+
+username = jan &
+password = asd
+
+
+### Logout
+POST {{base}}/session/logout

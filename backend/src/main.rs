@@ -21,6 +21,7 @@ impl Fairing for CORS {
         }
     }
 
+    // TODO: Remove before go-live
     async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
         response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
         response.set_header(Header::new(
@@ -52,4 +53,5 @@ fn rocket() -> _ {
         .attach(CORS)
         .mount("/", routes::bars::routes())
         .mount("/", FileServer::from(config.static_file_path))
+        .mount("/session", routes::session::routes())
 }

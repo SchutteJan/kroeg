@@ -4,7 +4,7 @@
 ## TODO
 
 - Implement session based login using this example: https://github.com/SergioBenitez/Rocket/tree/master/examples/cookies
-
+- Use Forms for data input instead of Json<T> in order to use the FromForm macros and validations
 ## System requirements
 
 - [postgresql-libs](https://archlinux.org/packages/extra/x86_64/postgresql-libs/)

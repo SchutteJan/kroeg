@@ -10,9 +10,9 @@ use rocket::serde::json::Json;
 use crate::routes::SessionUser;
 
 #[derive(FromForm)]
-struct Login<'r> {
-    username: &'r str,
-    password: &'r str,
+struct Login {
+    email: String,
+    password: String,
 }
 
 // TODO: The validation errors messages are not propagated to the 422 response
@@ -41,14 +41,14 @@ impl<'r> FromRequest<'r> for SessionUser {
 }
 
 #[post("/login", data = "<login>")]
-fn login(jar: &CookieJar<'_>, login: Form<Login<'_>>) -> Status {
-    // TODO Authentication backend
-    if login.username == "jan" && login.password == "asd" {
-        jar.add_private(("user_id", "999"));
-        Status::Ok
-    } else {
-        Status::NotFound
+async fn login(jar: &CookieJar<'_>, login: Form<Login>, conn: Db) -> Status {
+    let user_id = check_login_credentials(login.into_inner(), &conn).await;
+    if user_id.is_none() {
+        return Status::Unauthorized;
     }
+
+    jar.add_private(("user_id", user_id.unwrap().to_string()));
+    Status::Ok
 }
 
 #[get("/who")]
@@ -67,11 +67,6 @@ fn logout(jar: &CookieJar<'_>) -> String {
     String::from("Logged out")
 }
 
-#[post("/create")]
-fn create_already_logged_in(_user: SessionUser) -> Status {
-    Status::Forbidden
-}
-
 async fn get_user_id_by_email(query_email: String, conn: &Db) -> Option<i32> {
     use kroeg::schema::users::dsl::*;
 
@@ -79,6 +74,22 @@ async fn get_user_id_by_email(query_email: String, conn: &Db) -> Option<i32> {
         .run(move |c| {
             users
                 .filter(email.eq(query_email))
+                .select(id)
+                .first::<i32>(c)
+        })
+        .await;
+
+    user_id.ok()
+}
+
+async fn check_login_credentials(login: Login, conn: &Db) -> Option<i32> {
+    use kroeg::schema::users::dsl::*;
+
+    let user_id = conn
+        .run(move |c| {
+            users
+                .filter(email.eq(login.email))
+                .filter(password.eq(crypt(login.password, password)))
                 .select(id)
                 .first::<i32>(c)
         })
@@ -102,6 +113,11 @@ async fn create_user(user: CreateUser, conn: &Db) -> Result<i32, diesel::result:
         .await;
 
     user_id
+}
+
+#[post("/create")]
+fn create_already_logged_in(_user: SessionUser) -> Status {
+    Status::Forbidden
 }
 
 #[post("/create", data = "<user>", rank = 2)]

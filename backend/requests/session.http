@@ -7,8 +7,8 @@ POST {{base}}/session/login
 Content-Type: application/x-www-form-urlencoded
 Accept: application/json
 
-username = jan &
-password = asd
+email = some.user@gmail.com &
+password = somepassw0rdthatisok
 
 
 ### Create User
@@ -16,7 +16,7 @@ POST {{base}}/session/create
 Content-Type: application/x-www-form-urlencoded
 Accept: application/json
 
-email = jan.o.schutte@gmail.com &
+email = some.user@gmail.com &
 password = somepassw0rdthatisok
 
 

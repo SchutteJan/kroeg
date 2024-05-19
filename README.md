@@ -6,14 +6,17 @@ Web app to keep track of all _kroegen_ you've been to.
 MVP:
 - Implement session based login using this example: https://github.com/SergioBenitez/Rocket/tree/master/examples/cookies
   - [x] Implement rocket logic for keeping track of sessions and putting routes behind login
-  - [ ] Implement db models for user management
+  - [x] Implement db models for user management
   - [ ] Implement simple RBAC to differentiate admins and users
+  - [ ] Frontend login/logout pages
+- CSRF on all POST requests
 - Allow users to keep track of visited bars
 - Allow users to search for a bar (frontend only for now?)
 
 Improvements:
 - Use `Forms` for data input instead of `Json<T>` in order to use the `FromForm` macros and validations
 - Add "updated_at", "created_at" fields to all tables
+- Factor out database queries from the routes into a separate modules
 
 ## System requirements
 

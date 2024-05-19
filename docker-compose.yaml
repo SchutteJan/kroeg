@@ -6,6 +6,9 @@ services:
     image: kroeg
     ports:
       - 8080:8000
+    environment:
+      # This key is not used in production, don't worry
+      - ROCKET_SECRET_KEY=l0arkbZC8Uz48KEmeCfC3X9lmDMhoY1U6OzgUMm/pD8=
   db:
     image: postgis/postgis:15-3.3
     restart: always

@@ -20,12 +20,12 @@ RUN npx json2ts --additionalProperties false -i schemas.jsonschema -o src/models
     npm run build
 
 
-FROM debian:bookworm-slim
+FROM debian:12.5-slim
 
 WORKDIR /opt/kroeg
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libpq5=15.3-0+deb12u1 \
+    && apt-get install -y --no-install-recommends libpq5=15.6-0+deb12u1 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build-backend /home/app/target/release/server server

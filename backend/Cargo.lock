@@ -120,7 +120,6 @@ name = "backend"
 version = "0.1.0"
 dependencies = [
  "diesel",
- "memchr",
  "postgis_diesel",
  "rocket",
  "rocket_sync_db_pools",

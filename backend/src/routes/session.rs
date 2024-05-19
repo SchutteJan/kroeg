@@ -1,8 +1,6 @@
 use diesel::prelude::*;
 use kroeg::db::Db;
 use kroeg::pgcrypto::{crypt, gen_salt};
-use memchr::memchr;
-use rocket::data::{ByteUnit, ToByteUnit};
 use rocket::form;
 use rocket::form::{DataField, Form, FromFormField, ValueField};
 use rocket::http::{CookieJar, Status};
@@ -31,31 +29,21 @@ impl AsRef<String> for Email {
 #[rocket::async_trait]
 impl<'r> FromFormField<'r> for Email {
     fn from_value(field: ValueField<'r>) -> form::Result<'r, Self> {
+        // TODO: Better validation than checking the length and for the @ character
+        if field.value.len() > 320 {
+            return Err(form::Error::validation("Email address too long"))?;
+        }
+
         match field.value.find('@') {
             Some(_) => Ok(Email(field.value.to_lowercase())),
             None => Err(form::Error::validation("does not contain '@'"))?,
         }
     }
 
-    async fn from_data(field: DataField<'r, '_>) -> form::Result<'r, Self> {
-        // Read the capped data stream, returning a limit error as needed.
-        let limit: ByteUnit = 320.kibibytes();
-        let bytes = field.data.open(limit).into_bytes().await?;
-        if !bytes.is_complete() {
-            Err((None, Some(limit)))?;
-        }
-
-        // Store the bytes in request-local cache and check for the '@' character.
-        let bytes = bytes.into_inner();
-        let bytes = request::local_cache!(field.request, bytes);
-        let raw_email = match memchr(b'@', bytes) {
-            Some(_) => &bytes,
-            None => Err(form::Error::validation("does not contain '@'"))?,
-        };
-
-        // Try to parse the name as UTF-8 or return an error if it fails.
-        let name = std::str::from_utf8(raw_email).unwrap().to_lowercase();
-        Ok(Email(name.to_string()))
+    async fn from_data(_field: DataField<'r, '_>) -> form::Result<'r, Self> {
+        // An implementation was made in commit 427f6fea8c46, but I removed it because it didn't
+        // "feel" safe and added the memchr crate to the dependencies.
+        unimplemented!("from_data not implemented for Email")
     }
 }
 

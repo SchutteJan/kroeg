@@ -1,7 +1,10 @@
 use diesel::prelude::*;
 use kroeg::db::Db;
 use kroeg::pgcrypto::{crypt, gen_salt};
-use rocket::form::Form;
+use memchr::memchr;
+use rocket::data::{ByteUnit, ToByteUnit};
+use rocket::form;
+use rocket::form::{DataField, Form, FromFormField, ValueField};
 use rocket::http::{CookieJar, Status};
 use rocket::outcome::IntoOutcome;
 use rocket::request::{self, FromRequest, Request};
@@ -9,9 +12,56 @@ use rocket::serde::json::Json;
 
 use crate::routes::SessionUser;
 
+// This wrapped type is to allow a custom FromFormField implementation that lowercases the email
+struct Email(String);
+
+impl Email {
+    fn into_inner(self) -> String {
+        self.0
+    }
+}
+
+impl AsRef<String> for Email {
+    fn as_ref(&self) -> &String {
+        &self.0
+    }
+}
+
+// TODO: Move this elsewhere
+#[rocket::async_trait]
+impl<'r> FromFormField<'r> for Email {
+    fn from_value(field: ValueField<'r>) -> form::Result<'r, Self> {
+        match field.value.find('@') {
+            Some(_) => Ok(Email(field.value.to_lowercase())),
+            None => Err(form::Error::validation("does not contain '@'"))?,
+        }
+    }
+
+    async fn from_data(field: DataField<'r, '_>) -> form::Result<'r, Self> {
+        // Read the capped data stream, returning a limit error as needed.
+        let limit: ByteUnit = 320.kibibytes();
+        let bytes = field.data.open(limit).into_bytes().await?;
+        if !bytes.is_complete() {
+            Err((None, Some(limit)))?;
+        }
+
+        // Store the bytes in request-local cache and check for the '@' character.
+        let bytes = bytes.into_inner();
+        let bytes = request::local_cache!(field.request, bytes);
+        let raw_email = match memchr(b'@', bytes) {
+            Some(_) => &bytes,
+            None => Err(form::Error::validation("does not contain '@'"))?,
+        };
+
+        // Try to parse the name as UTF-8 or return an error if it fails.
+        let name = std::str::from_utf8(raw_email).unwrap().to_lowercase();
+        Ok(Email(name.to_string()))
+    }
+}
+
 #[derive(FromForm)]
 struct Login {
-    email: String,
+    email: Email,
     password: String,
 }
 
@@ -19,8 +69,7 @@ struct Login {
 // TODO: Better form validation
 #[derive(FromForm)]
 struct CreateUser {
-    #[field(validate = contains("@").or_else(msg!("Email address does not contain \"@\"")) )]
-    email: String,
+    email: Email,
     #[field(validate = omits("password").or_else(msg!("passwords can't contain the text \"password\"")) )]
     #[field(validate = len(8..).or_else(msg!("passwords must be at least 8 characters long")))]
     password: String,
@@ -88,7 +137,7 @@ async fn check_login_credentials(login: Login, conn: &Db) -> Option<i32> {
     let user_id = conn
         .run(move |c| {
             users
-                .filter(email.eq(login.email))
+                .filter(email.eq(login.email.into_inner()))
                 .filter(password.eq(crypt(login.password, password)))
                 .select(id)
                 .first::<i32>(c)
@@ -104,7 +153,7 @@ async fn create_user(user: CreateUser, conn: &Db) -> Result<i32, diesel::result:
         .run(move |c| {
             diesel::insert_into(users)
                 .values((
-                    email.eq(user.email.clone()),
+                    email.eq(user.email.into_inner().clone()),
                     password.eq(crypt(user.password.clone(), gen_salt("bf"))),
                 ))
                 .returning(id)
@@ -122,12 +171,14 @@ fn create_already_logged_in(_user: SessionUser) -> Status {
 
 #[post("/create", data = "<user>", rank = 2)]
 async fn create(user: Form<CreateUser>, conn: Db) -> Status {
-    let user_id = get_user_id_by_email(user.email.clone(), &conn).await;
+    let user = user.into_inner();
+    let email = user.email.as_ref().clone();
+    let user_id = get_user_id_by_email(email, &conn).await;
     if user_id.is_some() {
         return Status::Conflict;
     }
 
-    let _user_id = create_user(user.into_inner(), &conn).await.unwrap();
+    let _user_id = create_user(user, &conn).await.unwrap();
 
     Status::Ok
 }

@@ -1,4 +1,6 @@
-use rocket::form::{Error, Errors, Form};
+use diesel::prelude::*;
+use kroeg::db::Db;
+use rocket::form::Form;
 use rocket::http::{CookieJar, Status};
 use rocket::outcome::IntoOutcome;
 use rocket::request::{self, FromRequest, Request};
@@ -15,12 +17,12 @@ struct Login<'r> {
 // TODO: The validation errors messages are not propagated to the 422 response
 // TODO: Better form validation
 #[derive(FromForm)]
-struct CreateUser<'r> {
+struct CreateUser {
     #[field(validate = contains("@").or_else(msg!("Email address does not contain \"@\"")) )]
-    email: &'r str,
+    email: String,
     #[field(validate = omits("password").or_else(msg!("passwords can't contain the text \"password\"")) )]
     #[field(validate = len(8..).or_else(msg!("passwords must be at least 8 characters long")))]
-    password: &'r str,
+    password: String,
 }
 
 #[rocket::async_trait]
@@ -69,10 +71,49 @@ fn create_already_logged_in(_user: SessionUser) -> Status {
     Status::Forbidden
 }
 
-#[post("/create", data = "<create>", rank = 2)]
-fn create(create: Form<CreateUser<'_>>) -> Status {
-    // TODO: Actually create the user
-    println!("Creating user with email: {}", create.email);
+async fn get_user_id_by_email(query_email: String, conn: &Db) -> Option<i32> {
+    use kroeg::schema::users::dsl::*;
+
+    let user_id = conn
+        .run(move |c| {
+            users
+                .filter(email.eq(query_email))
+                .select(id)
+                .first::<i32>(c)
+        })
+        .await;
+
+    user_id.ok()
+}
+
+async fn create_user(user: CreateUser, conn: &Db) -> Result<i32, diesel::result::Error> {
+    use kroeg::schema::users::dsl::*;
+
+    let user_id = conn
+        .run(move |c| {
+            diesel::insert_into(users)
+                .values((
+                    email.eq(user.email.clone()),
+                    // TODO: use pgcrypto to hash the password
+                    password.eq(user.password.clone()),
+                ))
+                .returning(id)
+                .get_result(c)
+        })
+        .await;
+
+    user_id
+}
+
+#[post("/create", data = "<user>", rank = 2)]
+async fn create(user: Form<CreateUser>, conn: Db) -> Status {
+    let user_id = get_user_id_by_email(user.email.clone(), &conn).await;
+    if user_id.is_some() {
+        return Status::Conflict;
+    }
+
+    let _user_id = create_user(user.into_inner(), &conn).await.unwrap();
+
     Status::Ok
 }
 

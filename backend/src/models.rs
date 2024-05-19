@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::schema::locations;
 use crate::schema::users;
-use crate::schema::users::email;
 
 #[derive(Queryable, Selectable, Serialize, Deserialize)]
 #[diesel(check_for_backend(diesel::pg::Pg))]

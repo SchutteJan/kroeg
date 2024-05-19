@@ -9,6 +9,12 @@
 
 - [postgresql-libs](https://archlinux.org/packages/extra/x86_64/postgresql-libs/)
 
+## Pre-commit
+Install pre-commit hooks:
+```bash
+pre-commit install
+```
+
 ## Backend
 
 Rust webserver:

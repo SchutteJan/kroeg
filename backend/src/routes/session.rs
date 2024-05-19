@@ -1,5 +1,6 @@
 use diesel::prelude::*;
 use kroeg::db::Db;
+use kroeg::pgcrypto::{crypt, gen_salt};
 use rocket::form::Form;
 use rocket::http::{CookieJar, Status};
 use rocket::outcome::IntoOutcome;
@@ -88,14 +89,12 @@ async fn get_user_id_by_email(query_email: String, conn: &Db) -> Option<i32> {
 
 async fn create_user(user: CreateUser, conn: &Db) -> Result<i32, diesel::result::Error> {
     use kroeg::schema::users::dsl::*;
-
     let user_id = conn
         .run(move |c| {
             diesel::insert_into(users)
                 .values((
                     email.eq(user.email.clone()),
-                    // TODO: use pgcrypto to hash the password
-                    password.eq(user.password.clone()),
+                    password.eq(crypt(user.password.clone(), gen_salt("bf"))),
                 ))
                 .returning(id)
                 .get_result(c)

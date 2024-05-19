@@ -1,4 +1,4 @@
-use rocket::form::Form;
+use rocket::form::{Error, Errors, Form};
 use rocket::http::{CookieJar, Status};
 use rocket::outcome::IntoOutcome;
 use rocket::request::{self, FromRequest, Request};
@@ -9,6 +9,17 @@ use crate::routes::SessionUser;
 #[derive(FromForm)]
 struct Login<'r> {
     username: &'r str,
+    password: &'r str,
+}
+
+// TODO: The validation errors messages are not propagated to the 422 response
+// TODO: Better form validation
+#[derive(FromForm)]
+struct CreateUser<'r> {
+    #[field(validate = contains("@").or_else(msg!("Email address does not contain \"@\"")) )]
+    email: &'r str,
+    #[field(validate = omits("password").or_else(msg!("passwords can't contain the text \"password\"")) )]
+    #[field(validate = len(8..).or_else(msg!("passwords must be at least 8 characters long")))]
     password: &'r str,
 }
 
@@ -53,6 +64,25 @@ fn logout(jar: &CookieJar<'_>) -> String {
     String::from("Logged out")
 }
 
+#[post("/create")]
+fn create_already_logged_in(_user: SessionUser) -> Status {
+    Status::Forbidden
+}
+
+#[post("/create", data = "<create>", rank = 2)]
+fn create(create: Form<CreateUser<'_>>) -> Status {
+    // TODO: Actually create the user
+    println!("Creating user with email: {}", create.email);
+    Status::Ok
+}
+
 pub fn routes() -> Vec<rocket::Route> {
-    routes![login, logout, who, who_no_login]
+    routes![
+        login,
+        logout,
+        who,
+        who_no_login,
+        create,
+        create_already_logged_in
+    ]
 }

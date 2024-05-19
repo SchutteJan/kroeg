@@ -4,6 +4,8 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::schema::locations;
+use crate::schema::users;
+use crate::schema::users::email;
 
 #[derive(Queryable, Selectable, Serialize, Deserialize)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -70,4 +72,19 @@ impl From<&Location> for LocationResponse {
             imageurl: l.imageurl.clone(),
         }
     }
+}
+
+#[derive(Queryable, Selectable, Serialize, Deserialize)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct User {
+    pub id: i32,
+    pub email: String,
+    pub password: String,
+}
+
+#[derive(Deserialize, Insertable)]
+#[diesel(table_name = users)]
+pub struct NewUser {
+    pub email: String,
+    pub password: String,
 }

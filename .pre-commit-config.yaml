@@ -1,3 +1,4 @@
+default_install_hook_types: [pre-commit, commit-msg]
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
@@ -35,3 +36,10 @@ repos:
         entry: npm run check --prefix frontend
         language: node
         files: \.(ts|svelte)$
+    -   id: commit-message
+        name: Commit Message
+        stages:
+            - commit-msg
+        description: Check commit message adheres to conventional commit format
+        entry: scripts/commit-msg
+        language: system

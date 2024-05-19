@@ -12,6 +12,7 @@ repos:
     rev: v1.0
     hooks:
     -   id: fmt
+        entry: cargo +nightly fmt
         args: ["--manifest-path", "./backend/Cargo.toml", "--"]
     -   id: cargo-check
         args: ["--manifest-path", "./backend/Cargo.toml", "--"]

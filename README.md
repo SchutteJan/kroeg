@@ -13,6 +13,7 @@ MVP:
 
 Improvements:
 - Use `Forms` for data input instead of `Json<T>` in order to use the `FromForm` macros and validations
+- Add "updated_at", "created_at" fields to all tables
 
 ## System requirements
 
@@ -22,6 +23,11 @@ Improvements:
 Install pre-commit hooks:
 ```bash
 pre-commit install
+```
+
+The Rust formatter `rustfmt` has unstable features enabled, therefore the nightly toolchain is required to run it.
+```bash
+rustup toolchain install nightly
 ```
 
 ## Backend

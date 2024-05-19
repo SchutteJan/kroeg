@@ -1,9 +1,10 @@
-use crate::routes::SessionUser;
 use rocket::form::Form;
 use rocket::http::{CookieJar, Status};
 use rocket::outcome::IntoOutcome;
 use rocket::request::{self, FromRequest, Request};
 use rocket::serde::json::Json;
+
+use crate::routes::SessionUser;
 
 #[derive(FromForm)]
 struct Login<'r> {

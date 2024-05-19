@@ -22,11 +22,25 @@ diesel::table! {
 
     spatial_ref_sys (srid) {
         srid -> Int4,
+        #[max_length = 256]
         auth_name -> Nullable<Varchar>,
         auth_srid -> Nullable<Int4>,
+        #[max_length = 2048]
         srtext -> Nullable<Varchar>,
+        #[max_length = 2048]
         proj4text -> Nullable<Varchar>,
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(locations, spatial_ref_sys,);
+diesel::table! {
+    use postgis_diesel::sql_types::*;
+    use diesel::sql_types::*;
+
+    users (id) {
+        id -> Int4,
+        email -> Text,
+        password -> Text,
+    }
+}
+
+diesel::allow_tables_to_appear_in_same_query!(locations, spatial_ref_sys, users,);

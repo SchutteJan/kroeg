@@ -1,4 +1,3 @@
-use crate::routes::SessionUser;
 use diesel::result::Error;
 use diesel::SelectableHelper;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -7,6 +6,8 @@ use kroeg::models::{DeleteRequest, Location, LocationResponse, NewLocation};
 use kroeg::schema::locations::id;
 use rocket::http::Status;
 use rocket::serde::json::Json;
+
+use crate::routes::SessionUser;
 
 async fn get_bars(conn: Db) -> Result<Vec<Location>, Error> {
     use kroeg::schema::locations::dsl::*;

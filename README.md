@@ -1,10 +1,19 @@
 # Kroegen
-
+Web app to keep track of all _kroegen_ you've been to.
 
 ## TODO
 
+MVP:
 - Implement session based login using this example: https://github.com/SergioBenitez/Rocket/tree/master/examples/cookies
-- Use Forms for data input instead of Json<T> in order to use the FromForm macros and validations
+  - [x] Implement rocket logic for keeping track of sessions and putting routes behind login
+  - [ ] Implement db models for user management
+  - [ ] Implement simple RBAC to differentiate admins and users
+- Allow users to keep track of visited bars
+- Allow users to search for a bar (frontend only for now?)
+
+Improvements:
+- Use `Forms` for data input instead of `Json<T>` in order to use the `FromForm` macros and validations
+
 ## System requirements
 
 - [postgresql-libs](https://archlinux.org/packages/extra/x86_64/postgresql-libs/)

@@ -1,6 +1,7 @@
 use diesel::prelude::*;
 use kroeg::db::Db;
 use kroeg::pgcrypto::{crypt, gen_salt};
+use kroeg::sql_types::UserRoleEnum;
 use rocket::form;
 use rocket::form::{DataField, Form, FromFormField, ValueField};
 use rocket::http::{CookieJar, Status};
@@ -8,7 +9,7 @@ use rocket::outcome::IntoOutcome;
 use rocket::request::{self, FromRequest, Request};
 use rocket::serde::json::Json;
 
-use crate::routes::SessionUser;
+use crate::routes::{AdminUser, BasicUser};
 
 // This wrapped type is to allow a custom FromFormField implementation that lowercases the email
 struct Email(String);
@@ -58,42 +59,72 @@ struct Login {
 #[derive(FromForm)]
 struct CreateUser {
     email: Email,
-    #[field(validate = omits("password").or_else(msg!("passwords can't contain the text \"password\"")) )]
-    #[field(validate = len(8..).or_else(msg!("passwords must be at least 8 characters long")))]
+    #[field(
+        validate = omits("password").or_else(msg ! ("passwords can't contain the text \"password\""))
+    )]
+    #[field(validate = len(8..).or_else(msg ! ("passwords must be at least 8 characters long")))]
     password: String,
 }
 
 #[rocket::async_trait]
-impl<'r> FromRequest<'r> for SessionUser {
+impl<'r> FromRequest<'r> for BasicUser {
     type Error = std::convert::Infallible;
 
-    async fn from_request(request: &'r Request<'_>) -> request::Outcome<SessionUser, Self::Error> {
+    async fn from_request(request: &'r Request<'_>) -> request::Outcome<BasicUser, Self::Error> {
         request
             .cookies()
             .get_private("user_id")
             .and_then(|cookie| cookie.value().parse().ok())
-            .map(SessionUser)
+            .map(BasicUser)
+            .or_forward(Status::Unauthorized)
+    }
+}
+
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for AdminUser {
+    type Error = std::convert::Infallible;
+
+    async fn from_request(request: &'r Request<'_>) -> request::Outcome<AdminUser, Self::Error> {
+        request
+            .cookies()
+            .get_private("user_role")
+            .and_then(|cookie| match cookie.value() {
+                role if role == UserRoleEnum::Admin.to_string() => request
+                    .cookies()
+                    .get_private("user_id")
+                    .and_then(|cookie| cookie.value().parse().ok())
+                    .map(AdminUser),
+                _ => None,
+            })
             .or_forward(Status::Unauthorized)
     }
 }
 
 #[post("/login", data = "<login>")]
 async fn login(jar: &CookieJar<'_>, login: Form<Login>, conn: Db) -> Status {
-    let user_id = check_login_credentials(login.into_inner(), &conn).await;
-    if user_id.is_none() {
-        return Status::Unauthorized;
+    match check_login_credentials(login.into_inner(), &conn).await {
+        Ok((user_id, user_role)) => {
+            jar.add_private(("user_id", user_id.to_string()));
+            jar.add_private(("user_role", user_role.to_string()));
+            Status::Ok
+        }
+        Err(e) => match e {
+            diesel::result::Error::NotFound => Status::Unauthorized,
+            _ => Status::InternalServerError,
+        },
     }
-
-    jar.add_private(("user_id", user_id.unwrap().to_string()));
-    Status::Ok
 }
 
 #[get("/who")]
-fn who(user: SessionUser) -> Json<SessionUser> {
-    Json(user)
+fn who_admin(user: AdminUser) -> Json<(AdminUser, UserRoleEnum)> {
+    Json((user, UserRoleEnum::Admin))
+}
+#[get("/who", rank = 2)]
+fn who(user: BasicUser) -> Json<(BasicUser, UserRoleEnum)> {
+    Json((user, UserRoleEnum::User))
 }
 
-#[get("/who", rank = 2)]
+#[get("/who", rank = 3)]
 fn who_no_login() -> Status {
     Status::Unauthorized
 }
@@ -101,6 +132,7 @@ fn who_no_login() -> Status {
 #[post("/logout")]
 fn logout(jar: &CookieJar<'_>) -> String {
     jar.remove_private("user_id");
+    jar.remove_private("user_role");
     String::from("Logged out")
 }
 
@@ -119,20 +151,22 @@ async fn get_user_id_by_email(query_email: String, conn: &Db) -> Option<i32> {
     user_id.ok()
 }
 
-async fn check_login_credentials(login: Login, conn: &Db) -> Option<i32> {
+async fn check_login_credentials(
+    login: Login,
+    conn: &Db,
+) -> Result<(i32, UserRoleEnum), diesel::result::Error> {
     use kroeg::schema::users::dsl::*;
 
-    let user_id = conn
+    let user_id_role = conn
         .run(move |c| {
             users
                 .filter(email.eq(login.email.into_inner()))
                 .filter(password.eq(crypt(login.password, password)))
-                .select(id)
-                .first::<i32>(c)
+                .select((id, role))
+                .first::<(i32, UserRoleEnum)>(c)
         })
         .await;
-
-    user_id.ok()
+    user_id_role
 }
 
 async fn create_user(user: CreateUser, conn: &Db) -> Result<i32, diesel::result::Error> {
@@ -153,7 +187,7 @@ async fn create_user(user: CreateUser, conn: &Db) -> Result<i32, diesel::result:
 }
 
 #[post("/create")]
-fn create_already_logged_in(_user: SessionUser) -> Status {
+fn create_already_logged_in(_user: BasicUser) -> Status {
     Status::Forbidden
 }
 
@@ -168,7 +202,7 @@ async fn create(user: Form<CreateUser>, conn: Db) -> Status {
 
     let _user_id = create_user(user, &conn).await.unwrap();
 
-    Status::Ok
+    Status::Created
 }
 
 pub fn routes() -> Vec<rocket::Route> {
@@ -176,6 +210,7 @@ pub fn routes() -> Vec<rocket::Route> {
         login,
         logout,
         who,
+        who_admin,
         who_no_login,
         create,
         create_already_logged_in

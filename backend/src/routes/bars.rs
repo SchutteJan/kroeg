@@ -7,7 +7,7 @@ use kroeg::schema::locations::id;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
-use crate::routes::SessionUser;
+use crate::routes::AdminUser;
 
 async fn get_bars(conn: Db) -> Result<Vec<Location>, Error> {
     use kroeg::schema::locations::dsl::*;
@@ -26,7 +26,7 @@ async fn bars(conn: Db) -> Json<Vec<LocationResponse>> {
 }
 
 #[post("/bar", data = "<bar>")]
-async fn add_bar(conn: Db, bar: Json<NewLocation>, _user: SessionUser) -> Json<LocationResponse> {
+async fn add_bar(conn: Db, bar: Json<NewLocation>, _user: AdminUser) -> Json<LocationResponse> {
     // TODO: Find a better way of processing all of these structures
     use kroeg::models::Point;
     use kroeg::schema::locations;
@@ -59,7 +59,7 @@ async fn add_bar(conn: Db, bar: Json<NewLocation>, _user: SessionUser) -> Json<L
 }
 
 #[delete("/bar", data = "<bar>")]
-async fn delete_bar(conn: Db, bar: Json<DeleteRequest>, _user: SessionUser) -> Status {
+async fn delete_bar(conn: Db, bar: Json<DeleteRequest>, _user: AdminUser) -> Status {
     use kroeg::schema::locations;
 
     let deleted_location = conn

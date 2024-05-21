@@ -5,6 +5,7 @@ use kroeg::db::DbConn;
 use kroeg::models::locations::{Location, LocationResponse, NewLocation};
 use kroeg::models::DeleteRequest;
 use kroeg::schema::locations::id;
+use postgis_diesel::types::Point;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
@@ -29,7 +30,6 @@ async fn bars(conn: DbConn) -> Json<Vec<LocationResponse>> {
 #[post("/bar", data = "<bar>")]
 async fn add_bar(conn: DbConn, bar: Json<NewLocation>, _user: AdminUser) -> Json<LocationResponse> {
     // TODO: Find a better way of processing all of these structures
-    use kroeg::models::Point;
     use kroeg::schema::locations;
 
     let coordinate = Point {

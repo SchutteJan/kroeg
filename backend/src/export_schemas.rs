@@ -1,7 +1,7 @@
 extern crate kroeg;
 extern crate rocket;
 
-use kroeg::models::LocationResponse;
+use kroeg::models::locations::LocationResponse;
 use rocket::serde::json::serde_json;
 use schemars::{schema_for, JsonSchema};
 

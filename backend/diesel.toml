@@ -3,7 +3,7 @@
 
 [print_schema]
 file = "src/schema.rs"
-import_types = ["postgis_diesel::sql_types::*", "diesel::sql_types::*", "crate::sql_types::*"]
+import_types = ["postgis_diesel::sql_types::*", "diesel::sql_types::*", "crate::db::sql_types::*"]
 generate_missing_sql_type_definitions = false
 
 [migrations_directory]

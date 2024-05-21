@@ -3,7 +3,7 @@
 diesel::table! {
     use postgis_diesel::sql_types::*;
     use diesel::sql_types::*;
-    use crate::sql_types::*;
+    use crate::db::sql_types::*;
 
     locations (id) {
         id -> Int4,
@@ -20,7 +20,7 @@ diesel::table! {
 diesel::table! {
     use postgis_diesel::sql_types::*;
     use diesel::sql_types::*;
-    use crate::sql_types::*;
+    use crate::db::sql_types::*;
 
     spatial_ref_sys (srid) {
         srid -> Int4,
@@ -37,7 +37,7 @@ diesel::table! {
 diesel::table! {
     use postgis_diesel::sql_types::*;
     use diesel::sql_types::*;
-    use crate::sql_types::*;
+    use crate::db::sql_types::*;
 
     users (id) {
         id -> Int4,
@@ -47,4 +47,8 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(locations, spatial_ref_sys, users,);
+diesel::allow_tables_to_appear_in_same_query!(
+    locations,
+    spatial_ref_sys,
+    users,
+);

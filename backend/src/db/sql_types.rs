@@ -8,7 +8,7 @@ use diesel::*;
 use serde::Serialize;
 
 /*
-    The file implements the UserRole enum SqlType for Diesel. Enum in postgres are custom types, we
+    The file implements the UserRole enum SqlType for Diesel. Enum in postgres are custom types,
     therefore we need to provide a full SqlType implementation for every enum we use. Luckily the
     Diesel source code has an example implementation which this file is based on:
     https://github.com/diesel-rs/diesel/blob/master/diesel_tests/tests/custom_types.rs

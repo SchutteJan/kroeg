@@ -1,7 +1,7 @@
 use diesel::prelude::*;
+use kroeg::db::pgcrypto::{crypt, gen_salt};
+use kroeg::db::sql_types::UserRoleEnum;
 use kroeg::db::DbConn;
-use kroeg::pgcrypto::{crypt, gen_salt};
-use kroeg::sql_types::UserRoleEnum;
 use rocket::form;
 use rocket::form::{DataField, Form, FromFormField, ValueField};
 use rocket::http::{CookieJar, Status};

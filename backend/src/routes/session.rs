@@ -1,5 +1,5 @@
 use diesel::prelude::*;
-use kroeg::db::Db;
+use kroeg::db::DbConn;
 use kroeg::pgcrypto::{crypt, gen_salt};
 use kroeg::sql_types::UserRoleEnum;
 use rocket::form;
@@ -103,7 +103,7 @@ impl<'r> FromRequest<'r> for AdminUser {
 }
 
 #[post("/login", data = "<login>")]
-async fn login(jar: &CookieJar<'_>, login: Form<Login>, conn: Db) -> Status {
+async fn login(jar: &CookieJar<'_>, login: Form<Login>, conn: DbConn) -> Status {
     match check_login_credentials(login.into_inner(), &conn).await {
         Ok((user_id, user_role)) => {
             jar.add_private(("user_id", user_id.to_string()));
@@ -138,7 +138,7 @@ fn logout(jar: &CookieJar<'_>) -> String {
     String::from("Logged out")
 }
 
-async fn get_user_id_by_email(query_email: String, conn: &Db) -> Option<i32> {
+async fn get_user_id_by_email(query_email: String, conn: &DbConn) -> Option<i32> {
     use kroeg::schema::users::dsl::*;
 
     let user_id = conn
@@ -155,7 +155,7 @@ async fn get_user_id_by_email(query_email: String, conn: &Db) -> Option<i32> {
 
 async fn check_login_credentials(
     login: Login,
-    conn: &Db,
+    conn: &DbConn,
 ) -> Result<(i32, UserRoleEnum), diesel::result::Error> {
     use kroeg::schema::users::dsl::*;
 
@@ -171,7 +171,7 @@ async fn check_login_credentials(
     user_id_role
 }
 
-async fn create_user(user: CreateUser, conn: &Db) -> Result<i32, diesel::result::Error> {
+async fn create_user(user: CreateUser, conn: &DbConn) -> Result<i32, diesel::result::Error> {
     use kroeg::schema::users::dsl::*;
     let user_id = conn
         .run(move |c| {
@@ -194,7 +194,7 @@ fn create_already_logged_in(_user: BasicUser) -> Status {
 }
 
 #[post("/create", data = "<user>", rank = 2)]
-async fn create(user: Form<CreateUser>, conn: Db) -> Status {
+async fn create(user: Form<CreateUser>, conn: DbConn) -> Status {
     let user = user.into_inner();
     let email = user.email.as_ref().clone();
     let user_id = get_user_id_by_email(email, &conn).await;

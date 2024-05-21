@@ -6,7 +6,7 @@ extern crate core;
 
 mod routes;
 
-use kroeg::db::Db;
+use kroeg::db::DbConn;
 use rocket::fairing::{Fairing, Info, Kind};
 use rocket::fs::FileServer;
 use rocket::http::Header;
@@ -51,7 +51,7 @@ fn rocket() -> _ {
     println!("Serving static files from '{}'", config.static_file_path);
 
     rocket
-        .attach(Db::fairing())
+        .attach(DbConn::fairing())
         .attach(CORS)
         .mount("/", routes::bars::routes())
         .mount("/", FileServer::from(config.static_file_path))

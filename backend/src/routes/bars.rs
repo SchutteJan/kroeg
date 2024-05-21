@@ -1,7 +1,7 @@
 use diesel::result::Error;
 use diesel::SelectableHelper;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
-use kroeg::db::Db;
+use kroeg::db::DbConn;
 use kroeg::models::{DeleteRequest, Location, LocationResponse, NewLocation};
 use kroeg::schema::locations::id;
 use rocket::http::Status;
@@ -9,7 +9,7 @@ use rocket::serde::json::Json;
 
 use crate::routes::AdminUser;
 
-async fn get_bars(conn: Db) -> Result<Vec<Location>, Error> {
+async fn get_bars(conn: DbConn) -> Result<Vec<Location>, Error> {
     use kroeg::schema::locations::dsl::*;
 
     conn.run(|c| locations.filter(published.eq(true)).load(c))
@@ -17,7 +17,7 @@ async fn get_bars(conn: Db) -> Result<Vec<Location>, Error> {
 }
 
 #[get("/bars")]
-async fn bars(conn: Db) -> Json<Vec<LocationResponse>> {
+async fn bars(conn: DbConn) -> Json<Vec<LocationResponse>> {
     let bars: Vec<Location> = get_bars(conn).await.expect("has values");
 
     let response = bars.iter().map(|l| LocationResponse::from(l)).collect();
@@ -26,7 +26,7 @@ async fn bars(conn: Db) -> Json<Vec<LocationResponse>> {
 }
 
 #[post("/bar", data = "<bar>")]
-async fn add_bar(conn: Db, bar: Json<NewLocation>, _user: AdminUser) -> Json<LocationResponse> {
+async fn add_bar(conn: DbConn, bar: Json<NewLocation>, _user: AdminUser) -> Json<LocationResponse> {
     // TODO: Find a better way of processing all of these structures
     use kroeg::models::Point;
     use kroeg::schema::locations;
@@ -59,7 +59,7 @@ async fn add_bar(conn: Db, bar: Json<NewLocation>, _user: AdminUser) -> Json<Loc
 }
 
 #[delete("/bar", data = "<bar>")]
-async fn delete_bar(conn: Db, bar: Json<DeleteRequest>, _user: AdminUser) -> Status {
+async fn delete_bar(conn: DbConn, bar: Json<DeleteRequest>, _user: AdminUser) -> Status {
     use kroeg::schema::locations;
 
     let deleted_location = conn

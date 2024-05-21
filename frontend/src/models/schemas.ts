@@ -5,6 +5,9 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+export interface RootSchema {
+	location_response: LocationResponse;
+}
 export interface LocationResponse {
 	coordinates: Coordinate;
 	description?: string | null;

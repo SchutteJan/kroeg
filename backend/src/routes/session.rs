@@ -8,10 +8,12 @@ use rocket::http::{CookieJar, Status};
 use rocket::outcome::IntoOutcome;
 use rocket::request::{self, FromRequest, Request};
 use rocket::serde::json::Json;
+use schemars::JsonSchema;
 
 use crate::routes::{AdminUser, BasicUser};
 
 // This wrapped type is to allow a custom FromFormField implementation that lowercases the email
+#[derive(JsonSchema)]
 struct Email(String);
 
 impl Email {
@@ -56,8 +58,8 @@ struct Login {
 
 // TODO: The validation errors messages are not propagated to the 422 response
 // TODO: Better form validation
-#[derive(FromForm)]
-struct CreateUser {
+#[derive(FromForm, JsonSchema)]
+pub struct CreateUser {
     email: Email,
     #[field(
         validate = omits("password").or_else(msg ! ("passwords can't contain the text \"password\""))

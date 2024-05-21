@@ -17,7 +17,7 @@ Accept: application/json
   "description": "Description",
   "osm_node_id": "123ASD",
   "google_place_id": "123ASD",
-  "imageurl": "http://placekitten.com/g/400/400"
+  "imageurl": "https://loremflickr.com/400/400/cat"
 }
 
 ### Remove location

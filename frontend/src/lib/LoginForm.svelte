@@ -1,22 +1,45 @@
 <script lang="ts">
+	function handleLoginResponse(response: Response) {
+		if (response.ok) {
+			alert('Login successful');
+		} else {
+			// TODO: Handle responses
+			alert('Login failed: ' + response.statusText);
+		}
+	}
+
+	function handleSubmit(event: Event) {
+		if (!(event.target instanceof HTMLFormElement)) {
+			return;
+		}
+		event.preventDefault();
+		fetch('/session/login', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json'
+			},
+			body: new FormData(event.target)
+		}).then(handleLoginResponse);
+	}
 </script>
 
-<article>
-	<div>
-		<hgroup>
-			<h1>Login</h1>
-			<h2>Keep track of the bars you've visited</h2>
-		</hgroup>
-		<form>
+<form on:submit|preventDefault={handleSubmit}>
+	<fieldset>
+		<label>
+			Email
 			<input type="text" name="email" placeholder="Email" aria-label="Login" required />
+		</label>
+		<label>
+			Password
 			<input
 				type="password"
 				name="password"
 				placeholder="Password"
 				aria-label="Password"
 				required
+				minlength="8"
 			/>
-			<button type="submit" class="contrast" on:click|preventDefault>Login</button>
-		</form>
-	</div>
-</article>
+		</label>
+	</fieldset>
+	<input type="submit" value="Login" />
+</form>

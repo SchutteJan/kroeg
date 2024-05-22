@@ -30,7 +30,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@picocss/pico": "^2.0.0-alpha1",
+		"@picocss/pico": "^2.0.6",
 		"json-schema-to-typescript": "^13.0.2"
 	}
 }

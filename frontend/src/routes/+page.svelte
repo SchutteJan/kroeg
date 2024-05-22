@@ -15,29 +15,21 @@
 	});
 </script>
 
-<nav class="container-fluid">
-	<ul>
-		<li><a href="/">🍺</a></li>
-	</ul>
-</nav>
+<section>
+	<header class="container">
+		<hgroup>
+			<h1>Kroegen</h1>
+			<p>Zie hier een lijst van alle kroegen in Amsterdam.</p>
+		</hgroup>
+	</header>
 
-<main class="container">
-	<section>
-		<header class="container">
-			<hgroup>
-				<h1>Kroegen</h1>
-				<p>Zie hier een lijst van alle kroegen in Amsterdam.</p>
-			</hgroup>
-		</header>
-
-		<div class="bar-list-container">
-			{#if loading}
-				<progress />
-			{:else}
-				{#each bars as bar}
-					<BarItem {bar} />
-				{/each}
-			{/if}
-		</div>
-	</section>
-</main>
+	<div class="bar-list-container">
+		{#if loading}
+			<progress />
+		{:else}
+			{#each bars as bar}
+				<BarItem {bar} />
+			{/each}
+		{/if}
+	</div>
+</section>

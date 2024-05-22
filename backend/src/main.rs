@@ -1,8 +1,5 @@
-extern crate diesel;
-extern crate kroeg;
 #[macro_use]
 extern crate rocket;
-extern crate core;
 
 mod routes;
 

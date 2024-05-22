@@ -1,6 +1,7 @@
 use diesel::prelude::*;
 use diesel::Selectable;
 use postgis_diesel::types::Point;
+use rocket::serde::json::Json;
 use rocket::serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 
@@ -39,6 +40,24 @@ pub struct NewLocation {
     pub osm_node_id: Option<String>,
     pub google_place_id: Option<String>,
     pub imageurl: Option<String>,
+}
+
+impl NewLocation {
+    pub fn from_json(bar: &Json<NewLocation>) -> Self {
+        Self {
+            name: bar.name.clone(),
+            coordinates: Point {
+                x: bar.coordinates.x,
+                y: bar.coordinates.y,
+                srid: Some(4326),
+            },
+            published: bar.published,
+            description: bar.description.clone(),
+            osm_node_id: bar.osm_node_id.clone(),
+            google_place_id: bar.google_place_id.clone(),
+            imageurl: bar.imageurl.clone(),
+        }
+    }
 }
 
 // TODO: Implement traits for Serde and JsonSchema for Point type

@@ -16,12 +16,8 @@
 </script>
 
 <section>
-	<header class="container">
-		<hgroup>
-			<h1>Kroegen</h1>
-			<p>Zie hier een lijst van alle kroegen in Amsterdam.</p>
-		</hgroup>
-	</header>
+	<h2>List</h2>
+	<p>All kroegen listed.</p>
 
 	<div class="bar-list-container">
 		{#if loading}

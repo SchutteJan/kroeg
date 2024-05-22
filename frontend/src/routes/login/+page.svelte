@@ -3,12 +3,8 @@
 </script>
 
 <section>
-	<header class="container">
-		<hgroup>
-			<h1>Login</h1>
-			<p>Keep track of visited kroegen.</p>
-		</hgroup>
-	</header>
+	<h2>Login</h2>
+	<p>Keep track of visited kroegen.</p>
 
 	<p>
 		<LoginForm />

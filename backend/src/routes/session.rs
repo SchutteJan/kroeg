@@ -1,6 +1,6 @@
 use kroeg::db::sql_types::UserRoleEnum;
 use kroeg::db::{users, DbConn};
-use kroeg::models::users::{CreateUser, Login};
+use kroeg::models::users::{Login, Register, WhoResponse};
 use rocket::form::Form;
 use rocket::http::{CookieJar, Status};
 use rocket::outcome::IntoOutcome;
@@ -59,12 +59,18 @@ async fn login(jar: &CookieJar<'_>, login: Form<Login>, conn: DbConn) -> Status 
 }
 
 #[get("/who")]
-fn who_admin(user: AdminUser) -> Json<(AdminUser, UserRoleEnum)> {
-    Json((user, UserRoleEnum::Admin))
+fn who_admin(user: AdminUser) -> Json<WhoResponse> {
+    Json(WhoResponse {
+        id: user.0,
+        role: UserRoleEnum::Admin,
+    })
 }
 #[get("/who", rank = 2)]
-fn who(user: BasicUser) -> Json<(BasicUser, UserRoleEnum)> {
-    Json((user, UserRoleEnum::User))
+fn who(user: BasicUser) -> Json<WhoResponse> {
+    Json(WhoResponse {
+        id: user.0,
+        role: UserRoleEnum::User,
+    })
 }
 
 #[get("/who", rank = 3)]
@@ -85,7 +91,7 @@ fn create_already_logged_in(_user: BasicUser) -> Status {
 }
 
 #[post("/create", data = "<user>", rank = 2)]
-async fn create(user: Form<CreateUser>, conn: DbConn) -> Status {
+async fn create(user: Form<Register>, conn: DbConn) -> Status {
     let user = user.into_inner();
     let email = user.email.as_ref().clone();
     let user_id = users::get_user_id_by_email(email, &conn).await;

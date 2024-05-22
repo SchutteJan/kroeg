@@ -5,6 +5,7 @@ use diesel::deserialize::FromSql;
 use diesel::pg::{Pg, PgValue};
 use diesel::serialize::{IsNull, Output, ToSql};
 use diesel::*;
+use schemars::JsonSchema;
 use serde::Serialize;
 
 /*
@@ -17,7 +18,7 @@ use serde::Serialize;
 #[diesel(postgres_type(name = "UserRole"))]
 pub struct UserRole;
 
-#[derive(Debug, PartialEq, FromSqlRow, AsExpression, Eq, Serialize)]
+#[derive(Debug, PartialEq, FromSqlRow, AsExpression, Eq, Serialize, JsonSchema)]
 #[diesel(sql_type = UserRole)]
 pub enum UserRoleEnum {
     Admin,

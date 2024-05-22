@@ -5,8 +5,16 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface RootSchema {
-	location_response: LocationResponse;
+export type Email = string;
+export type UserRoleEnum = 'Admin' | 'User';
+
+export interface ExportedSchemas {
+	_location_response: LocationResponse;
+	/**
+	 * @minItems 2
+	 * @maxItems 2
+	 */
+	_user: [Login, WhoResponse];
 }
 export interface LocationResponse {
 	coordinates: Coordinate;
@@ -18,4 +26,12 @@ export interface LocationResponse {
 export interface Coordinate {
 	x: number;
 	y: number;
+}
+export interface Login {
+	email: Email;
+	password: string;
+}
+export interface WhoResponse {
+	id: number;
+	role: UserRoleEnum;
 }

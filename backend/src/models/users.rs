@@ -5,7 +5,14 @@ use rocket::serde::{Deserialize, Serialize};
 use rocket::{form, FromForm};
 use schemars::JsonSchema;
 
+use crate::db::sql_types::UserRoleEnum;
 use crate::schema::users;
+
+#[derive(Serialize, JsonSchema)]
+pub struct WhoResponse {
+    pub id: i32,
+    pub role: UserRoleEnum,
+}
 
 #[derive(Queryable, Selectable, Serialize, Deserialize)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -22,7 +29,7 @@ pub struct NewUser {
     pub password: String,
 }
 
-#[derive(FromForm)]
+#[derive(FromForm, JsonSchema)]
 pub struct Login {
     pub email: Email,
     pub password: String,
@@ -31,7 +38,7 @@ pub struct Login {
 // TODO: The validation errors messages are not propagated to the 422 response
 // TODO: Better form validation
 #[derive(FromForm, JsonSchema)]
-pub struct CreateUser {
+pub struct Register {
     pub email: Email,
     #[field(
         validate = omits("password").or_else(msg ! ("passwords can't contain the text \"password\""))

@@ -5,6 +5,6 @@ pub mod session;
 
 // Is this the best location for these types??
 #[derive(Serialize)]
-pub struct BasicUser(usize);
+pub struct BasicUser(i32);
 #[derive(Serialize)]
-pub struct AdminUser(usize);
+pub struct AdminUser(i32);

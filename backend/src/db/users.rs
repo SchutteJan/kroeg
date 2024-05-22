@@ -1,6 +1,6 @@
 use crate::db::sql_types::UserRoleEnum;
 use crate::db::DbConn;
-use crate::models::users::{CreateUser, Login};
+use crate::models::users::{Login, Register};
 
 pub async fn get_user_id_by_email(query_email: String, conn: &DbConn) -> Option<i32> {
     use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
@@ -19,7 +19,7 @@ pub async fn get_user_id_by_email(query_email: String, conn: &DbConn) -> Option<
     user_id.ok()
 }
 
-pub async fn create_user(user: CreateUser, conn: &DbConn) -> Result<i32, diesel::result::Error> {
+pub async fn create_user(user: Register, conn: &DbConn) -> Result<i32, diesel::result::Error> {
     use diesel::{ExpressionMethods, RunQueryDsl};
 
     use crate::db::pgcrypto::{crypt, gen_salt};

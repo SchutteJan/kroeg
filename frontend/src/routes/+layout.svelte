@@ -1,6 +1,8 @@
+<!-- TODO: this script is not typescript? -->
 <script>
 	import '@picocss/pico';
 	import '$lib/pico-settings.css';
+	import ThemeSwitcher from '$lib/ThemeSwitcher.svelte';
 	import { onMount } from 'svelte';
 	import { logout, whoami } from '../api/session';
 
@@ -8,6 +10,7 @@
 	 * @type {import("../models/schemas").WhoResponse | undefined}
 	 */
 	export let user = undefined;
+	export let darkMode = false;
 
 	async function handleLogout() {
 		logout().then(() => {
@@ -15,11 +18,25 @@
 		});
 	}
 
+	function prefersColorSchemaDark() {
+		return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+	}
+
+	function toggleTheme() {
+		darkMode = !darkMode;
+		// <html data-theme="light">
+		document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+	}
+
 	onMount(async () => {
 		let me = await whoami();
 		if (me) {
 			console.log(me);
 			user = me;
+		}
+
+		if (prefersColorSchemaDark()) {
+			darkMode = true;
 		}
 	});
 </script>
@@ -35,6 +52,7 @@
 				{:else}
 					<li><a href="/login" class="contrast">Login</a></li>
 				{/if}
+				<li><ThemeSwitcher onClick={toggleTheme} {darkMode} /></li>
 			</ul>
 		</nav>
 	</div>

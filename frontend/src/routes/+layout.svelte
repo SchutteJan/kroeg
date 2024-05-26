@@ -10,7 +10,6 @@
 	export let user = undefined;
 
 	async function handleLogout() {
-		console.log('LOGGING OUT');
 		logout().then(() => {
 			user = undefined;
 		});

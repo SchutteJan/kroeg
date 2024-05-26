@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { login } from '../api/session';
+
 	function handleLoginResponse(response: Response) {
 		if (response.ok) {
-			alert('Login successful');
+			location.href = '/';
 		} else {
 			// TODO: Handle responses
 			alert('Login failed: ' + response.statusText);
@@ -13,13 +15,7 @@
 			return;
 		}
 		event.preventDefault();
-		fetch('/session/login', {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json'
-			},
-			body: new FormData(event.target)
-		}).then(handleLoginResponse);
+		login(new FormData(event.target)).then(handleLoginResponse);
 	}
 </script>
 

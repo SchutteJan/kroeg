@@ -8,7 +8,10 @@ MVP:
   - [x] Implement rocket logic for keeping track of sessions and putting routes behind login
   - [x] Implement db models for user management
   - [x] Implement simple RBAC to differentiate admins and users
-  - [ ] Frontend login/logout pages
+  - [x] Frontend login/logout pages
+  - [ ] Frontend register page
+  - [ ] Page with users account details
+- Determine how SPA routes and api routes should work together (or: how to serve the frontend and api together)
 - CSRF on all POST requests
 - Allow users to keep track of visited bars
 - Allow users to search for a bar (frontend only for now?)

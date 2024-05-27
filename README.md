@@ -10,7 +10,7 @@ MVP:
   - [x] Implement simple RBAC to differentiate admins and users
   - [x] Frontend login/logout pages
   - [x] Frontend register page
-  - [ ] Page with users account details
+  - [x] Page with users account details
 - [x] Determine how SPA routes and api routes should work together (or: how to serve the frontend and api together)
 - [ ] CSRF on all POST requests
 - [ ] Allow users to keep track of visited bars

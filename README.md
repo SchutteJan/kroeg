@@ -9,7 +9,7 @@ MVP:
   - [x] Implement db models for user management
   - [x] Implement simple RBAC to differentiate admins and users
   - [x] Frontend login/logout pages
-  - [ ] Frontend register page
+  - [x] Frontend register page
   - [ ] Page with users account details
 - [x] Determine how SPA routes and api routes should work together (or: how to serve the frontend and api together)
 - [ ] CSRF on all POST requests

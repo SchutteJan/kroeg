@@ -1,12 +1,14 @@
 <script lang="ts">
-	import { login } from '../api/session';
+	import { register } from '../api/session';
 
-	function handleLoginResponse(response: Response) {
+	function handleRegisterResponse(response: Response) {
 		if (response.ok) {
-			location.href = '/';
+			// TODO: Log the user in immediately
+			alert('Registered successfully, continue to login');
+			location.href = '/login';
 		} else {
 			// TODO: Handle responses
-			alert('Login failed: ' + response.statusText);
+			alert('Register failed: ' + response.statusText);
 		}
 	}
 
@@ -14,7 +16,7 @@
 		if (!(event.target instanceof HTMLFormElement)) {
 			return;
 		}
-		login(new FormData(event.target)).then(handleLoginResponse);
+		register(new FormData(event.target)).then(handleRegisterResponse);
 	}
 </script>
 
@@ -22,7 +24,7 @@
 	<fieldset>
 		<label>
 			Email
-			<input type="text" name="email" placeholder="Email" aria-label="Login" required />
+			<input type="text" name="email" placeholder="Email" aria-label="Register" required />
 		</label>
 		<label>
 			Password
@@ -36,5 +38,5 @@
 			/>
 		</label>
 	</fieldset>
-	<input type="submit" value="Login" />
+	<input type="submit" value="Register" />
 </form>

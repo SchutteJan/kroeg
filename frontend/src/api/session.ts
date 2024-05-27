@@ -36,3 +36,13 @@ export async function login(form: FormData): Promise<Response> {
 		body: form
 	});
 }
+
+export async function register(form: FormData): Promise<Response> {
+	return fetch(get_api_base_url() + '/session/create', {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json'
+		},
+		body: form
+	});
+}

@@ -50,6 +50,7 @@
 					<li><a on:click={handleLogout} href="/" class="contrast">Logout</a></li>
 				{:else}
 					<li><a href="/login" class="contrast">Login</a></li>
+					<li><a href="/register" class="contrast">Register</a></li>
 				{/if}
 				<li><ThemeSwitcher onClick={toggleTheme} {darkMode} /></li>
 			</ul>

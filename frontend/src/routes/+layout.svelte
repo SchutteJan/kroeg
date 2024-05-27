@@ -1,15 +1,14 @@
 <!-- TODO: this script is not typescript? -->
-<script>
+
+<script lang="ts">
 	import '@picocss/pico';
 	import '$lib/pico-settings.css';
 	import ThemeSwitcher from '$lib/ThemeSwitcher.svelte';
 	import { onMount } from 'svelte';
 	import { logout, whoami } from '../api/session';
+	import type { WhoResponse } from '../models/schemas';
 
-	/**
-	 * @type {import("../models/schemas").WhoResponse | undefined}
-	 */
-	export let user = undefined;
+	export let user: WhoResponse | undefined = undefined;
 	export let darkMode = false;
 
 	async function handleLogout() {

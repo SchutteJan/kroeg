@@ -12,9 +12,9 @@ MVP:
   - [x] Frontend register page
   - [x] Page with users account details
 - [x] Determine how SPA routes and api routes should work together (or: how to serve the frontend and api together)
-- [ ] CSRF on all POST requests
 - [ ] Allow users to keep track of visited bars
 - [ ] Allow users to search for a bar (frontend only for now?)
+- [ ] CSRF on all POST requests
 
 Improvements:
 - Use `Forms` for data input instead of `Json<T>` in order to use the `FromForm` macros and validations

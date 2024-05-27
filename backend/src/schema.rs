@@ -47,8 +47,25 @@ diesel::table! {
     }
 }
 
+diesel::table! {
+    use postgis_diesel::sql_types::*;
+    use diesel::sql_types::*;
+    use crate::db::sql_types::*;
+
+    visits (id) {
+        id -> Int4,
+        user_id -> Int4,
+        location_id -> Int4,
+        visited_at -> Timestamp,
+    }
+}
+
+diesel::joinable!(visits -> locations (location_id));
+diesel::joinable!(visits -> users (user_id));
+
 diesel::allow_tables_to_appear_in_same_query!(
     locations,
     spatial_ref_sys,
     users,
+    visits,
 );

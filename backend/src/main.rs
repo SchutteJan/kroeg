@@ -67,5 +67,6 @@ fn rocket() -> _ {
         .mount("/", routes::bars::routes())
         .mount("/", FileServer::from(config.static_file_path))
         .mount("/session", routes::session::routes())
+        .mount("/visit", routes::visits::routes())
         .mount("/", routes![catch_all])
 }

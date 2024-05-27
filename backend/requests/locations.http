@@ -20,6 +20,11 @@ Accept: application/json
   "imageurl": "https://loremflickr.com/400/400/cat"
 }
 
+### Visit location
+POST {{base}}/visit/bar/3
+Content-Type: application/json
+Accept: application/json
+
 ### Remove location
 DELETE {{base}}/bar
 Content-Type: application/json

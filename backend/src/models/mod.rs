@@ -1,6 +1,6 @@
 pub mod locations;
 pub mod users;
-mod visits;
+pub mod visits;
 
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};

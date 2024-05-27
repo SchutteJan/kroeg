@@ -12,3 +12,11 @@ pub struct Visit {
     pub location_id: i32,
     pub visited_at: NaiveDateTime,
 }
+
+#[derive(Insertable)]
+#[diesel(table_name = visits)]
+pub struct NewVisit {
+    pub user_id: i32,
+    pub location_id: i32,
+    pub visited_at: NaiveDateTime,
+}

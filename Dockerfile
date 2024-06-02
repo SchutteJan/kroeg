@@ -1,4 +1,4 @@
-FROM rust:1.71.1 as build-backend
+FROM rust:1.78.0 as build-backend
 
 WORKDIR /home/app
 

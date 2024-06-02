@@ -1,5 +1,3 @@
-<!-- TODO: this script is not typescript? -->
-
 <script lang="ts">
 	import '@picocss/pico';
 	import '$lib/pico-settings.css';
@@ -35,9 +33,8 @@
 			user.set(me);
 		}
 
-		if (prefersColorSchemaDark()) {
-			darkMode = true;
-		}
+		let dataTheme = document.documentElement.getAttribute('data-theme');
+		darkMode = prefersColorSchemaDark() || dataTheme === 'dark';
 	});
 </script>
 

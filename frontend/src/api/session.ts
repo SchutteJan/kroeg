@@ -1,5 +1,5 @@
-import type { WhoResponse } from '../models/schemas';
-import { get_api_base_url } from './base';
+import type { WhoResponse } from '../models/schemas'
+import { get_api_base_url } from './base'
 
 export async function whoami(): Promise<WhoResponse | undefined> {
 	return fetch(get_api_base_url() + '/session/who', {
@@ -10,12 +10,12 @@ export async function whoami(): Promise<WhoResponse | undefined> {
 	}).then(async (response) => {
 		switch (response.status) {
 			case 200: {
-				return await await response.json();
+				return await await response.json()
 			}
 			case 401:
-				return undefined;
+				return undefined
 		}
-	});
+	})
 }
 
 export async function logout(): Promise<void> {
@@ -24,7 +24,7 @@ export async function logout(): Promise<void> {
 		headers: {
 			'Content-Type': 'application/json'
 		}
-	}).then(() => {});
+	}).then(() => {})
 }
 
 export async function login(form: FormData): Promise<Response> {
@@ -34,7 +34,7 @@ export async function login(form: FormData): Promise<Response> {
 			Accept: 'application/json'
 		},
 		body: form
-	});
+	})
 }
 
 export async function register(form: FormData): Promise<Response> {
@@ -44,5 +44,5 @@ export async function register(form: FormData): Promise<Response> {
 			Accept: 'application/json'
 		},
 		body: form
-	});
+	})
 }

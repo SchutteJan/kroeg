@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let darkMode = false;
-	export let onClick = () => {};
+	export let darkMode = false
+	export let onClick = () => {}
 </script>
 
 <!-- Taken from https://toggles.dev/expand/html -->

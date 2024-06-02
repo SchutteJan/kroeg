@@ -1,20 +1,20 @@
 <script lang="ts">
-	import BarItem from '../lib/BarItem.svelte';
-	import { onMount } from 'svelte';
-	import type { LocationResponse } from '../models/schemas';
-	import { get_bars } from '../api/bars';
+	import BarItem from '../lib/BarItem.svelte'
+	import { onMount } from 'svelte'
+	import type { LocationResponse } from '../models/schemas'
+	import { get_bars } from '../api/bars'
 
-	let bars: Array<LocationResponse> = [];
-	let loading = true;
+	let bars: Array<LocationResponse> = []
+	let loading = true
 
 	onMount(async () => {
 		get_bars()
 			.then((response) => response.json())
 			.then((data) => {
-				bars = data;
-				loading = false;
-			});
-	});
+				bars = data
+				loading = false
+			})
+	})
 </script>
 
 <section>

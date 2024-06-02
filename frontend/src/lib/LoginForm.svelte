@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { login } from '../api/session';
+	import { login } from '../api/session'
 
 	function handleLoginResponse(response: Response) {
 		if (response.ok) {
-			location.href = '/';
+			location.href = '/'
 		} else {
 			// TODO: Handle responses
-			alert('Login failed: ' + response.statusText);
+			alert('Login failed: ' + response.statusText)
 		}
 	}
 
 	function handleSubmit(event: Event) {
 		if (!(event.target instanceof HTMLFormElement)) {
-			return;
+			return
 		}
-		login(new FormData(event.target)).then(handleLoginResponse);
+		login(new FormData(event.target)).then(handleLoginResponse)
 	}
 </script>
 

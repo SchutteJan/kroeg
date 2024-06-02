@@ -1,41 +1,41 @@
 <script lang="ts">
-	import '@picocss/pico';
-	import '$lib/pico-settings.css';
-	import { user } from '$lib/stores';
-	import ThemeSwitcher from '$lib/ThemeSwitcher.svelte';
-	import { onMount } from 'svelte';
-	import { logout, whoami } from '../api/session';
-	import type { WhoResponse } from '../models/schemas';
+	import '@picocss/pico'
+	import '$lib/pico-settings.css'
+	import { user } from '$lib/stores'
+	import ThemeSwitcher from '$lib/ThemeSwitcher.svelte'
+	import { onMount } from 'svelte'
+	import { logout, whoami } from '../api/session'
+	import type { WhoResponse } from '../models/schemas'
 
-	export let userData: WhoResponse | undefined = undefined;
-	export let darkMode = false;
+	export let userData: WhoResponse | undefined = undefined
+	export let darkMode = false
 
-	user.subscribe((value) => (userData = value));
+	user.subscribe((value) => (userData = value))
 
 	async function handleLogout() {
 		logout().then(() => {
-			user.set(undefined);
-		});
+			user.set(undefined)
+		})
 	}
 
 	function prefersColorSchemaDark() {
-		return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+		return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
 	}
 
 	function toggleTheme() {
-		darkMode = !darkMode;
-		document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+		darkMode = !darkMode
+		document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light')
 	}
 
 	onMount(async () => {
-		let me = await whoami();
+		let me = await whoami()
 		if (me) {
-			user.set(me);
+			user.set(me)
 		}
 
-		let dataTheme = document.documentElement.getAttribute('data-theme');
-		darkMode = prefersColorSchemaDark() || dataTheme === 'dark';
-	});
+		let dataTheme = document.documentElement.getAttribute('data-theme')
+		darkMode = prefersColorSchemaDark() || dataTheme === 'dark'
+	})
 </script>
 
 <header class="container">

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { user } from '$lib/stores';
-	import type { WhoResponse } from '../../models/schemas';
+	import { user } from '$lib/stores'
+	import type { WhoResponse } from '../../models/schemas'
 
-	export let userData: WhoResponse | undefined = undefined;
-	user.subscribe((value) => (userData = value));
+	export let userData: WhoResponse | undefined = undefined
+	user.subscribe((value) => (userData = value))
 </script>
 
 <section>

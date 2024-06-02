@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { LocationResponse } from '../models/schemas';
+	import type { LocationResponse } from '../models/schemas'
 
-	export let bar: LocationResponse;
+	export let bar: LocationResponse
 	const placeholder =
-		'https://images.jan.tf/ecmAqc89DiQEu0HlPMBcNxDFyigWMJI-xUJCNJAbklQ/fill/512/512/no/1/bG9jYWw6Ly8vYmFyLXBsYWNlaG9sZGVyLnBuZw.jpg';
+		'https://images.jan.tf/ecmAqc89DiQEu0HlPMBcNxDFyigWMJI-xUJCNJAbklQ/fill/512/512/no/1/bG9jYWw6Ly8vYmFyLXBsYWNlaG9sZGVyLnBuZw.jpg'
 </script>
 
 <article class="bar-item">

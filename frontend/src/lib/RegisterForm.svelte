@@ -1,22 +1,22 @@
 <script lang="ts">
-	import { register } from '../api/session';
+	import { register } from '../api/session'
 
 	function handleRegisterResponse(response: Response) {
 		if (response.ok) {
 			// TODO: Log the user in immediately
-			alert('Registered successfully, continue to login');
-			location.href = '/login';
+			alert('Registered successfully, continue to login')
+			location.href = '/login'
 		} else {
 			// TODO: Handle responses
-			alert('Register failed: ' + response.statusText);
+			alert('Register failed: ' + response.statusText)
 		}
 	}
 
 	function handleSubmit(event: Event) {
 		if (!(event.target instanceof HTMLFormElement)) {
-			return;
+			return
 		}
-		register(new FormData(event.target)).then(handleRegisterResponse);
+		register(new FormData(event.target)).then(handleRegisterResponse)
 	}
 </script>
 

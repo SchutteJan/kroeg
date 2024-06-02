@@ -5,33 +5,33 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type Email = string;
-export type UserRoleEnum = 'Admin' | 'User';
+export type Email = string
+export type UserRoleEnum = 'Admin' | 'User'
 
 export interface ExportedSchemas {
-	_location_response: LocationResponse;
+	_location_response: LocationResponse
 	/**
 	 * @minItems 2
 	 * @maxItems 2
 	 */
-	_user: [Login, WhoResponse];
+	_user: [Login, WhoResponse]
 }
 export interface LocationResponse {
-	coordinates: Coordinate;
-	description?: string | null;
-	id: number;
-	imageurl?: string | null;
-	name: string;
+	coordinates: Coordinate
+	description?: string | null
+	id: number
+	imageurl?: string | null
+	name: string
 }
 export interface Coordinate {
-	x: number;
-	y: number;
+	x: number
+	y: number
 }
 export interface Login {
-	email: Email;
-	password: string;
+	email: Email
+	password: string
 }
 export interface WhoResponse {
-	id: number;
-	role: UserRoleEnum;
+	id: number
+	role: UserRoleEnum
 }

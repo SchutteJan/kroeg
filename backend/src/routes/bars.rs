@@ -1,5 +1,5 @@
 use kroeg::db::{locations, DbConn};
-use kroeg::models::locations::{Location, LocationResponse, NewLocation};
+use kroeg::models::locations::{LocationResponse, NewLocation};
 use kroeg::models::DeleteRequest;
 use rocket::http::Status;
 use rocket::serde::json::Json;

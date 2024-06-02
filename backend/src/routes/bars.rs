@@ -7,13 +7,15 @@ use rocket::serde::json::Json;
 use crate::routes::AdminUser;
 
 #[get("/bars")]
-async fn bars(conn: DbConn) -> Json<Vec<LocationResponse>> {
-    // TODO: Change call signature to Result<Vec<LocationResponse>, Status> or similar
-    let bars: Vec<Location> = locations::get_bars(&conn).await.expect("has values");
+async fn bars(conn: DbConn) -> Result<Json<Vec<LocationResponse>>, Status> {
+    let bars = locations::get_bars(&conn).await;
 
-    let response = bars.iter().map(|l| LocationResponse::from(l)).collect();
-
-    Json(response)
+    match bars {
+        Ok(bar_list) => Ok(Json(
+            bar_list.iter().map(|l| LocationResponse::from(l)).collect(),
+        )),
+        Err(_) => Err(Status::InternalServerError),
+    }
 }
 
 #[post("/bar", data = "<bar>")]

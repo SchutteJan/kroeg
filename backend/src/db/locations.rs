@@ -1,14 +1,44 @@
 use diesel::result::Error;
-use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl, SelectableHelper};
+use diesel::{
+    BoolExpressionMethods, ExpressionMethods, JoinOnDsl, NullableExpressionMethods, QueryDsl,
+    RunQueryDsl, SelectableHelper,
+};
 
 use crate::db::DbConn;
-use crate::models::locations::{Location, NewLocation};
+use crate::models::locations::{Location, LocationResponse, NewLocation};
 
 pub async fn get_bars(conn: &DbConn) -> Result<Vec<Location>, Error> {
     use crate::schema::locations::dsl::*;
 
     conn.run(|c| locations.filter(published.eq(true)).load(c))
         .await
+}
+
+pub async fn get_bars_with_visits(
+    user_id: i32,
+    conn: &DbConn,
+) -> Result<Vec<LocationResponse>, Error> {
+    use crate::schema::locations;
+    use crate::schema::visits;
+
+    conn.run(move |c| {
+        locations::table
+            .left_join(
+                visits::table.on(visits::location_id
+                    .eq(locations::id)
+                    .and(visits::user_id.eq(user_id))),
+            )
+            .select((
+                locations::id,
+                locations::name,
+                locations::description,
+                locations::coordinates,
+                locations::imageurl,
+                visits::visited_at.nullable(),
+            ))
+            .load(c)
+    })
+    .await
 }
 
 pub async fn add_bar(conn: &DbConn, bar: NewLocation) -> Result<Location, Error> {

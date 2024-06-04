@@ -4,9 +4,9 @@ use kroeg::models::DeleteRequest;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 
-use crate::routes::AdminUser;
+use crate::routes::{AdminUser, BasicUser};
 
-#[get("/bars")]
+#[get("/bars", rank = 2)]
 async fn bars(conn: DbConn) -> Result<Json<Vec<LocationResponse>>, Status> {
     let bars = locations::get_bars(&conn).await;
 
@@ -14,6 +14,19 @@ async fn bars(conn: DbConn) -> Result<Json<Vec<LocationResponse>>, Status> {
         Ok(bar_list) => Ok(Json(
             bar_list.iter().map(|l| LocationResponse::from(l)).collect(),
         )),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+#[get("/bars")]
+async fn visited_bars(
+    user: BasicUser,
+    conn: DbConn,
+) -> Result<Json<Vec<LocationResponse>>, Status> {
+    let bars = locations::get_bars_with_visits(user.0, &conn).await;
+
+    match bars {
+        Ok(bar_list) => Ok(Json(bar_list)),
         Err(_) => Err(Status::InternalServerError),
     }
 }
@@ -46,5 +59,5 @@ async fn delete_bar(conn: DbConn, bar: Json<DeleteRequest>, _user: AdminUser) ->
 }
 
 pub fn routes() -> Vec<rocket::Route> {
-    routes![add_bar, bars, delete_bar]
+    routes![add_bar, bars, delete_bar, visited_bars]
 }

@@ -21,7 +21,7 @@ Accept: application/json
 }
 
 ### Visit location
-POST {{base}}/visit/bar/3
+POST {{base}}/visit/bar/1
 Content-Type: application/json
 Accept: application/json
 

@@ -41,6 +41,7 @@ impl ToSql<UserRole, Pg> for UserRoleEnum {
     }
 }
 
+// TODO: read https://docs.rs/diesel/latest/diesel/deserialize/trait.FromSql.html
 impl FromSql<UserRole, Pg> for UserRoleEnum {
     fn from_sql(bytes: PgValue<'_>) -> deserialize::Result<Self> {
         match bytes.as_bytes() {

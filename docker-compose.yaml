@@ -1,3 +1,6 @@
+volumes:
+  database:
+
 services:
   app:
     build: ./
@@ -9,6 +12,8 @@ services:
       - ROCKET_SECRET_KEY=l0arkbZC8Uz48KEmeCfC3X9lmDMhoY1U6OzgUMm/pD8=
   db:
     image: postgis/postgis:15-3.3
+    volumes:
+      - database:/var/lib/postgresql/data
     restart: always
     environment:
       POSTGRES_PASSWORD: example

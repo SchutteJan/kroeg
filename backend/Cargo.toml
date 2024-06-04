@@ -23,6 +23,7 @@ serde = "1.0.202"
 rocket = { version = "=0.5.0", features = ["json", "secrets"] }
 rocket_sync_db_pools = { version = "0.1.0", features = ["diesel_postgres_pool"] }
 diesel = { version = "2.1.6", features = ["postgres", "chrono"] }
-postgis_diesel = { version = "2.3.1", features = ["serde"] }
-schemars = { version = "0.8.20" }
+#postgis_diesel = { version = "2.3.1", features = ["serde"] }
+postgis_diesel = { path = "../../postgis-diesel", features = ["serde", "schemars"] }
+schemars = { version = "0.8.20", features = ["chrono"] }
 chrono = { version = "0.4.38", features = ["serde"] }

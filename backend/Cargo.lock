@@ -1066,11 +1066,10 @@ dependencies = [
 [[package]]
 name = "postgis_diesel"
 version = "2.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d69a45c13765c7c6dce8e0fc3d976e669d4de545529c769f44e55b59a4d76c69"
 dependencies = [
  "byteorder",
  "diesel",
+ "schemars",
  "serde",
 ]
 
@@ -1393,6 +1392,7 @@ version = "0.8.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09c024468a378b7e36765cd36702b7a90cc3cba11654f6685c8f233408e89e92"
 dependencies = [
+ "chrono",
  "dyn-clone",
  "schemars_derive",
  "serde",

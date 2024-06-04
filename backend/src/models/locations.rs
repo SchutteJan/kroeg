@@ -1,3 +1,4 @@
+use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use diesel::Selectable;
 use postgis_diesel::types::Point;
@@ -5,7 +6,6 @@ use rocket::serde::json::Json;
 use rocket::serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 
-use crate::models::Coordinate;
 use crate::schema::locations;
 
 #[derive(Queryable, Selectable, Serialize, Deserialize)]
@@ -21,13 +21,14 @@ pub struct Location {
     pub imageurl: Option<String>,
 }
 
-#[derive(Serialize, JsonSchema)]
+#[derive(Serialize, JsonSchema, Queryable)]
 pub struct LocationResponse {
     pub id: i32,
     pub name: String,
     pub description: Option<String>,
-    pub coordinates: Coordinate,
+    pub coordinates: Point,
     pub imageurl: Option<String>,
+    pub visited_at: Option<NaiveDateTime>,
 }
 
 #[derive(Deserialize, Insertable)]
@@ -60,24 +61,15 @@ impl NewLocation {
     }
 }
 
-// TODO: Implement traits for Serde and JsonSchema for Point type
-impl From<Point> for Coordinate {
-    fn from(value: Point) -> Self {
-        Self {
-            x: value.x,
-            y: value.y,
-        }
-    }
-}
-
 impl From<&Location> for LocationResponse {
     fn from(l: &Location) -> Self {
         Self {
             id: l.id,
             name: l.name.clone(),
             description: l.description.clone(),
-            coordinates: Coordinate::from(l.coordinates),
+            coordinates: l.coordinates,
             imageurl: l.imageurl.clone(),
+            visited_at: None,
         }
     }
 }

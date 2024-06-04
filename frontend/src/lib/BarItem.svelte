@@ -1,9 +1,20 @@
 <script lang="ts">
 	import type { LocationResponse } from '../models/schemas'
-
+	import { localDate } from '$lib/time'
+	import { user } from '$lib/stores'
+	import { visitBar } from '../api/bars'
 	export let bar: LocationResponse
+	export let isLoggedIn: boolean = false
+
+	user.subscribe((value) => (isLoggedIn = value !== undefined))
 	const placeholder =
 		'https://images.jan.tf/ecmAqc89DiQEu0HlPMBcNxDFyigWMJI-xUJCNJAbklQ/fill/512/512/no/1/bG9jYWw6Ly8vYmFyLXBsYWNlaG9sZGVyLnBuZw.jpg'
+
+	function handleVisitBar(id: number) {
+		visitBar(id).then(() => {
+			bar.visited_at = new Date().toISOString()
+		})
+	}
 </script>
 
 <article class="bar-item">
@@ -11,7 +22,16 @@
 	<div>
 		<h2>{bar.name}</h2>
 		<p>{bar.description ?? 'No Description'}</p>
-		<small>x:{bar.coordinates.x}, y: {bar.coordinates.y} </small>
+		<p>
+			<small>x:{bar.coordinates.x}, y: {bar.coordinates.y} </small>
+		</p>
+		{#if bar.visited_at && isLoggedIn}
+			<p>Visited on: {localDate(bar.visited_at)}</p>
+		{:else if isLoggedIn}
+			<p>
+				<button on:click={() => handleVisitBar(bar.id)} class="outline">Mark Visited</button>
+			</p>
+		{/if}
 	</div>
 </article>
 

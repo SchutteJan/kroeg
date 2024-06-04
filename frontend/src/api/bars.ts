@@ -5,3 +5,9 @@ export async function get_bars(): Promise<Response> {
 		method: 'GET'
 	})
 }
+
+export async function visitBar(id: number): Promise<Response> {
+	return fetch(get_api_base_url() + '/visit/bar/' + id, {
+		method: 'POST'
+	})
+}

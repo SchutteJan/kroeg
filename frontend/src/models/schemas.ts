@@ -17,13 +17,18 @@ export interface ExportedSchemas {
 	_user: [Login, WhoResponse]
 }
 export interface LocationResponse {
-	coordinates: Coordinate
+	coordinates: Point
 	description?: string | null
 	id: number
 	imageurl?: string | null
 	name: string
+	visited_at?: string | null
 }
-export interface Coordinate {
+/**
+ * Use that structure in `Insertable` or `Queryable` struct if you work with Point geometry. ``` #[macro_use] extern crate diesel; use postgis_diesel::types::Point; #[derive(Queryable)] struct QueryablePointExample { id: i32, point: Point, } ```
+ */
+export interface Point {
+	srid?: number | null
 	x: number
 	y: number
 }

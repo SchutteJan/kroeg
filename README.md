@@ -18,8 +18,13 @@ MVP:
   - [x] API routes for querying visited bars
   - [x] Frontend page for adding and viewing visits
   - [x] Stats page for users to see how many bars they've visited
+- [ ] Show errors in the UI using toast notifications
 - [ ] Allow users to search for a bar (frontend only for now?)
 - [ ] CSRF on all POST requests
+
+Issues:
+- The api never returns a 404, it will always fall back to the 200.html page
+  - Example: `curl http://localhost:8080/session/doesnotexist`
 
 Improvements:
 - Use `Forms` for data input instead of `Json<T>` in order to use the `FromForm` macros and validations

@@ -46,3 +46,12 @@ export async function register(form: FormData): Promise<Response> {
 		body: form
 	})
 }
+
+export async function get_bar_visit_stats(): Promise<Response> {
+	return fetch(get_api_base_url() + '/session/stats', {
+		method: 'GET',
+		headers: {
+			Accept: 'application/json'
+		}
+	})
+}

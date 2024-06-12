@@ -11,10 +11,10 @@ export type UserRoleEnum = 'Admin' | 'User'
 export interface ExportedSchemas {
 	_location_response: LocationResponse
 	/**
-	 * @minItems 2
-	 * @maxItems 2
+	 * @minItems 3
+	 * @maxItems 3
 	 */
-	_user: [Login, WhoResponse]
+	_user: [Login, WhoResponse, VisitStats]
 }
 export interface LocationResponse {
 	coordinates: Point
@@ -39,4 +39,8 @@ export interface Login {
 export interface WhoResponse {
 	id: number
 	role: UserRoleEnum
+}
+export interface VisitStats {
+	distinct_bar_visits: number
+	total_bar_visits: number
 }

@@ -1,12 +1,13 @@
 use kroeg::models::locations::LocationResponse;
 use kroeg::models::users::{Login, WhoResponse};
+use kroeg::models::visits::VisitStats;
 use rocket::serde::json::serde_json;
 use schemars::{schema_for, JsonSchema};
 
 #[derive(JsonSchema)]
 struct ExportedSchemas {
     _location_response: LocationResponse,
-    _user: (Login, WhoResponse),
+    _user: (Login, WhoResponse, VisitStats),
 }
 
 fn main() {

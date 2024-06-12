@@ -37,7 +37,6 @@ pub async fn get_user_visit_stats(
         visits
             .select(count_distinct(location_id))
             .filter(user_id.eq(current_user_id))
-            .distinct()
             .first::<i64>(c)
     });
 

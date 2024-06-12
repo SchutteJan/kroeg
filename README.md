@@ -17,6 +17,7 @@ MVP:
   - [x] API routes for adding visits
   - [x] API routes for querying visited bars
   - [x] Frontend page for adding and viewing visits
+  - [x] Stats page for users to see how many bars they've visited
 - [ ] Allow users to search for a bar (frontend only for now?)
 - [ ] CSRF on all POST requests
 

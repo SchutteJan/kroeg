@@ -27,3 +27,4 @@ diesel = { version = "2.1.6", features = ["postgres", "chrono"] }
 postgis_diesel = { git = "https://github.com/SchutteJan/postgis-diesel/", branch="feature/schemars", features = ["serde", "schemars"] }
 schemars = { version = "0.8.20", features = ["chrono"] }
 chrono = { version = "0.4.38", features = ["serde"] }
+futures = "0.3.30"

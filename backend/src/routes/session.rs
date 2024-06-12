@@ -1,6 +1,7 @@
 use kroeg::db::sql_types::UserRoleEnum;
-use kroeg::db::{users, DbConn};
+use kroeg::db::{users, visits, DbConn};
 use kroeg::models::users::{Login, Register, WhoResponse};
+use kroeg::models::visits::VisitStats;
 use rocket::form::Form;
 use rocket::http::{CookieJar, Status};
 use rocket::outcome::IntoOutcome;
@@ -103,6 +104,15 @@ async fn create(user: Form<Register>, conn: DbConn) -> Status {
 
     Status::Created
 }
+#[get("/stats")]
+async fn get_visit_stats(conn: DbConn, user: BasicUser) -> Result<Json<VisitStats>, Status> {
+    let stats = visits::get_user_visit_stats(user.0, &conn).await;
+
+    match stats {
+        Ok(stats) => Ok(Json(stats)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
 
 pub fn routes() -> Vec<rocket::Route> {
     routes![
@@ -112,6 +122,7 @@ pub fn routes() -> Vec<rocket::Route> {
         who_admin,
         who_no_login,
         create,
-        create_already_logged_in
+        create_already_logged_in,
+        get_visit_stats
     ]
 }

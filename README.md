@@ -15,8 +15,8 @@ MVP:
 - [ ] Allow users to keep track of visited bars
   - [x] db models for visits
   - [x] API routes for adding visits
-  - [ ] API routes for querying visited bars
-  - [ ] Frontend page for adding and viewing visits
+  - [x] API routes for querying visited bars
+  - [x] Frontend page for adding and viewing visits
 - [ ] Allow users to search for a bar (frontend only for now?)
 - [ ] CSRF on all POST requests
 

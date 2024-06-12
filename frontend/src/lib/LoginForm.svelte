@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import { login } from '../api/session'
 
 	function handleLoginResponse(response: Response) {
@@ -16,13 +17,23 @@
 		}
 		login(new FormData(event.target)).then(handleLoginResponse)
 	}
+	const isLocalhost = location.hostname === 'localhost'
+	let dummyEmail = ''
+	let dummyPassword = ''
+
+	onMount(() => {
+		if (isLocalhost) {
+			dummyEmail = 'some.user@gmail.com'
+			dummyPassword = 'somepassw0rdthatisok'
+		}
+	})
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
 	<fieldset>
 		<label>
 			Email
-			<input type="text" name="email" placeholder="Email" aria-label="Login" required />
+			<input type="text" name="email" placeholder="Email" aria-label="Login" value={dummyEmail} />
 		</label>
 		<label>
 			Password
@@ -33,6 +44,7 @@
 				aria-label="Password"
 				required
 				minlength="8"
+				value={dummyPassword}
 			/>
 		</label>
 	</fieldset>

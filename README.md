@@ -12,7 +12,7 @@ MVP:
   - [x] Frontend register page
   - [x] Page with users account details
 - [x] Determine how SPA routes and api routes should work together (or: how to serve the frontend and api together)
-- [ ] Allow users to keep track of visited bars
+- [x] Allow users to keep track of visited bars
   - [x] db models for visits
   - [x] API routes for adding visits
   - [x] API routes for querying visited bars

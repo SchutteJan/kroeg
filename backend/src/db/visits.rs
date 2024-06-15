@@ -1,4 +1,4 @@
-use diesel::dsl::{count, count_distinct};
+use diesel::dsl::count_distinct;
 use diesel::result::Error;
 use diesel::{QueryDsl, RunQueryDsl, SelectableHelper};
 use futures::try_join;
@@ -26,13 +26,6 @@ pub async fn get_user_visit_stats(
 
     use crate::schema::visits::dsl::*;
 
-    let total_visits_fut = conn.run(move |c| {
-        visits
-            .select(count(id))
-            .filter(user_id.eq(current_user_id))
-            .first::<i64>(c)
-    });
-
     let distinct_bar_visits_fut = conn.run(move |c| {
         visits
             .select(count_distinct(location_id))
@@ -40,10 +33,9 @@ pub async fn get_user_visit_stats(
             .first::<i64>(c)
     });
 
-    match try_join!(total_visits_fut, distinct_bar_visits_fut) {
-        Ok((total_visits, distinct_bar_visits)) => Ok(VisitStats {
+    match try_join!(distinct_bar_visits_fut) {
+        Ok((distinct_bar_visits,)) => Ok(VisitStats {
             distinct_bar_visits,
-            total_bar_visits: total_visits,
         }),
         Err(e) => Err(e),
     }

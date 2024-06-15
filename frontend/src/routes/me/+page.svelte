@@ -36,8 +36,7 @@
 	{#if visitStats}
 		<p>Visits:</p>
 		<ul>
-			<li>Total visits: {visitStats.total_bar_visits}</li>
-			<li>Distinct bars: {visitStats.distinct_bar_visits}</li>
+			<li>Distinct bar visits: {visitStats.distinct_bar_visits}</li>
 		</ul>
 	{:else}
 		<p>Fetching visit stats...</p>

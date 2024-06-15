@@ -25,5 +25,4 @@ pub struct NewVisit {
 #[derive(Serialize, Deserialize, JsonSchema)]
 pub struct VisitStats {
     pub distinct_bar_visits: i64,
-    pub total_bar_visits: i64,
 }

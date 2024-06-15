@@ -25,12 +25,12 @@
 
 <section>
 	<h2>Me</h2>
-	<p>This is you.</p>
-
 	{#if userData}
+		<p>This is you.</p>
 		<p>Logged in with role '{userData.role}'</p>
 	{:else}
-		<p>Uhuh not sure who you are, are you even logged in?</p>
+		<p>This could've been you.</p>
+		<p>Uhuh not sure who you are, are you even <a href="/login">logged in</a>?</p>
 	{/if}
 
 	{#if visitStats}
@@ -38,7 +38,7 @@
 		<ul>
 			<li>Distinct bar visits: {visitStats.distinct_bar_visits}</li>
 		</ul>
-	{:else}
+	{:else if userData}
 		<p>Fetching visit stats...</p>
 		<progress />
 	{/if}

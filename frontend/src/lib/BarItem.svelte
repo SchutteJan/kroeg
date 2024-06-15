@@ -26,7 +26,7 @@
 			<small>x:{bar.coordinates.x}, y: {bar.coordinates.y} </small>
 		</p>
 		{#if bar.visited_at && isLoggedIn}
-			<p>Visited on: {localDate(bar.visited_at)}</p>
+			<p>First visited on: {localDate(bar.visited_at)}</p>
 		{:else if isLoggedIn}
 			<p>
 				<button on:click={() => handleVisitBar(bar.id)} class="outline">Mark Visited</button>

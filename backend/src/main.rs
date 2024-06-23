@@ -5,11 +5,25 @@ mod routes;
 
 use std::path::Path;
 
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use kroeg::db::DbConn;
 use rocket::fairing::AdHoc;
 use rocket::fs::{FileServer, NamedFile};
-use rocket::State;
+use rocket::{Build, Rocket, State};
 use serde::Deserialize;
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
+
+async fn run_migrations(rocket: Rocket<Build>) -> Result<Rocket<Build>, Rocket<Build>> {
+    let db = DbConn::get_one(&rocket).await.expect("database connection");
+    db.run(|conn| match conn.run_pending_migrations(MIGRATIONS) {
+        Ok(_) => Ok(rocket),
+        Err(e) => {
+            error!("Failed to run database migrations: {:?}", e);
+            Err(rocket)
+        }
+    })
+    .await
+}
 
 #[derive(Deserialize)]
 #[serde(crate = "rocket::serde")]
@@ -38,6 +52,7 @@ fn rocket() -> _ {
     rocket
         .attach(DbConn::fairing())
         .attach(AdHoc::config::<Config>())
+        .attach(AdHoc::try_on_ignite("Database Migrations", run_migrations))
         .mount("/", routes::bars::routes())
         .mount("/", FileServer::from(config.static_file_path))
         .mount("/session", routes::session::routes())

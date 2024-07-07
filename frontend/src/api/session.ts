@@ -10,7 +10,7 @@ export async function whoami(): Promise<WhoResponse | undefined> {
 	}).then(async (response) => {
 		switch (response.status) {
 			case 200: {
-				return await await response.json()
+				return await response.json()
 			}
 			case 401:
 				return undefined

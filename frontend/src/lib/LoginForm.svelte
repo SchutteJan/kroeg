@@ -11,10 +11,11 @@
 		}
 	}
 
-	function handleSubmit(event: Event) {
+	function handleSubmit(event: SubmitEvent) {
 		if (!(event.target instanceof HTMLFormElement)) {
 			return
 		}
+		event.submitter?.setAttribute('aria-busy', 'true')
 		login(new FormData(event.target)).then(handleLoginResponse)
 	}
 	const isLocalhost = location.hostname === 'localhost'
@@ -33,20 +34,28 @@
 	<fieldset>
 		<label>
 			Email
-			<input type="text" name="email" placeholder="Email" aria-label="Login" value={dummyEmail} />
+			<input
+				type="email"
+				name="email"
+				id="email"
+				aria-label="Login"
+				autocomplete="email"
+				required
+				value={dummyEmail}
+			/>
 		</label>
 		<label>
 			Password
 			<input
 				type="password"
 				name="password"
-				placeholder="Password"
 				aria-label="Password"
+				autocomplete="current-password"
 				required
 				minlength="8"
 				value={dummyPassword}
 			/>
 		</label>
 	</fieldset>
-	<input type="submit" value="Login" />
+	<button type="submit">Login</button>
 </form>

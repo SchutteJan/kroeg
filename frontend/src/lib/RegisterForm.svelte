@@ -12,10 +12,11 @@
 		}
 	}
 
-	function handleSubmit(event: Event) {
+	function handleSubmit(event: SubmitEvent) {
 		if (!(event.target instanceof HTMLFormElement)) {
 			return
 		}
+		event.submitter?.setAttribute('aria-busy', 'true')
 		register(new FormData(event.target)).then(handleRegisterResponse)
 	}
 </script>
@@ -24,19 +25,26 @@
 	<fieldset>
 		<label>
 			Email
-			<input type="text" name="email" placeholder="Email" aria-label="Register" required />
+			<input
+				type="email"
+				name="email"
+				id="email"
+				aria-label="Login"
+				autocomplete="email"
+				required
+			/>
 		</label>
 		<label>
 			Password
 			<input
 				type="password"
 				name="password"
-				placeholder="Password"
 				aria-label="Password"
+				autocomplete="new-password"
 				required
 				minlength="8"
 			/>
 		</label>
 	</fieldset>
-	<input type="submit" value="Register" />
+	<button type="submit">Register</button>
 </form>

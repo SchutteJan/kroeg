@@ -4,19 +4,13 @@
 	import { user } from '$lib/stores'
 	import ThemeSwitcher from '$lib/ThemeSwitcher.svelte'
 	import { onMount } from 'svelte'
-	import { logout, whoami } from '../api/session'
+	import { whoami } from '../api/session'
 	import type { WhoResponse } from '../models/schemas'
 
 	export let userData: WhoResponse | undefined = undefined
 	export let darkMode = false
 
 	user.subscribe((value) => (userData = value))
-
-	async function handleLogout() {
-		logout().then(() => {
-			user.set(undefined)
-		})
-	}
 
 	function prefersColorSchemaDark() {
 		return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -45,7 +39,6 @@
 			<ul>
 				{#if userData}
 					<li><a href="/me" class="contrast">Me</a></li>
-					<li><a on:click={handleLogout} href="/" class="contrast">Logout</a></li>
 				{:else}
 					<li><a href="/login" class="contrast">Login</a></li>
 					<li><a href="/register" class="contrast">Register</a></li>

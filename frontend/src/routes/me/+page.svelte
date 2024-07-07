@@ -2,12 +2,18 @@
 	import { user } from '$lib/stores'
 	import { onMount } from 'svelte'
 	import type { VisitStats, WhoResponse } from '../../models/schemas'
-	import { get_bar_visit_stats } from '../../api/session'
+	import { get_bar_visit_stats, logout } from '../../api/session'
 
 	export let userData: WhoResponse | undefined = undefined
 	user.subscribe((value) => (userData = value))
 
 	export let visitStats: VisitStats | undefined = undefined
+
+	async function handleLogout() {
+		logout().then(() => {
+			user.set(undefined)
+		})
+	}
 
 	onMount(async () => {
 		get_bar_visit_stats()
@@ -26,20 +32,28 @@
 <section>
 	<h2>Me</h2>
 	{#if userData}
-		<p>This is you.</p>
-		<p>Logged in with role '{userData.role}'</p>
+		<p>
+			This is you.
+			{#if userData.role !== 'User'}
+				You are logged in with role '{userData.role}'
+			{/if}
+		</p>
 	{:else}
 		<p>This could've been you.</p>
 		<p>Uhuh not sure who you are, are you even <a href="/login">logged in</a>?</p>
 	{/if}
 
-	{#if visitStats}
+	{#if visitStats && userData}
 		<p>Visits:</p>
 		<ul>
-			<li>Distinct bar visits: {visitStats.distinct_bar_visits}</li>
+			<li>Total bars visited: {visitStats.distinct_bar_visits}</li>
 		</ul>
 	{:else if userData}
 		<p>Fetching visit stats...</p>
 		<progress />
+	{/if}
+
+	{#if userData}
+		<button on:click={handleLogout} class="outline">Logout</button>
 	{/if}
 </section>

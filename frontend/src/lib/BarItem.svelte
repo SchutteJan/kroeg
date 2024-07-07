@@ -18,15 +18,12 @@
 </script>
 
 <article class="bar-item">
-	<div class="bar-image" style="background-image: url({bar.imageurl ?? placeholder})" />
-	<div>
-		<h2>{bar.name}</h2>
+	<img alt={bar.name} class="bar-image" src={bar.imageurl ?? placeholder} />
+	<div class="bar-content">
+		<h3>{bar.name}</h3>
 		<p>{bar.description ?? 'No Description'}</p>
-		<p>
-			<small>x:{bar.coordinates.x}, y: {bar.coordinates.y} </small>
-		</p>
 		{#if bar.visited_at && isLoggedIn}
-			<p>First visited on: {localDate(bar.visited_at)}</p>
+			<p>Visited on: {localDate(bar.visited_at)}</p>
 		{:else if isLoggedIn}
 			<p>
 				<button on:click={() => handleVisitBar(bar.id)} class="outline">Mark Visited</button>
@@ -39,12 +36,13 @@
 	.bar-item {
 		display: flex;
 	}
-	.bar-item > .bar-image {
+	.bar-image {
 		width: 10rem;
 		height: 10rem;
-		background-size: cover;
-		background-position: center;
 		margin: 0 var(--pico-block-spacing-horizontal);
 		border-radius: var(--pico-border-radius);
+		max-width: 100%;
+		object-fit: cover;
+		align-self: center;
 	}
 </style>

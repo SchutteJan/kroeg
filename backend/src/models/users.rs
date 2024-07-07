@@ -1,5 +1,6 @@
 use diesel::prelude::*;
 use diesel::Selectable;
+use rocket::data::ToByteUnit;
 use rocket::form::{DataField, FromFormField, ValueField};
 use rocket::serde::{Deserialize, Serialize};
 use rocket::{form, FromForm};
@@ -77,9 +78,36 @@ impl<'r> FromFormField<'r> for Email {
         }
     }
 
-    async fn from_data(_field: DataField<'r, '_>) -> form::Result<'r, Self> {
-        // An implementation was made in commit 427f6fea8c46, but I removed it because it didn't
-        // "feel" safe and added the memchr crate to the dependencies.
-        unimplemented!("from_data not implemented for Email")
+    async fn from_data(field: DataField<'r, '_>) -> form::Result<'r, Self> {
+        // Retrieve the configured data limit or use `256KiB` as default.
+        let limit = field
+            .request
+            .limits()
+            .get("email")
+            .unwrap_or(256.kibibytes());
+
+        // Read the capped data stream, returning a limit error as needed.
+        let bytes = field.data.open(limit).into_bytes().await?;
+        if !bytes.is_complete() {
+            Err((None, Some(limit)))?;
+        }
+
+        // Store the bytes in request-local cache
+        let bytes = bytes.into_inner();
+        let bytes = rocket::request::local_cache!(field.request, bytes);
+        let value = std::str::from_utf8(bytes);
+
+        if value.is_err() {
+            return Err(form::Error::validation("Invalid UTF-8 encoding"))?;
+        }
+
+        if value.unwrap().len() > 320 {
+            return Err(form::Error::validation("Email address too long"))?;
+        }
+
+        match value.unwrap().find('@') {
+            Some(_) => Ok(Email(value.unwrap().to_lowercase())),
+            None => Err(form::Error::validation("does not contain '@'"))?,
+        }
     }
 }

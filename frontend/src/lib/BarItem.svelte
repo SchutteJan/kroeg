@@ -11,6 +11,13 @@
 	const placeholder =
 		'https://images.jan.tf/ecmAqc89DiQEu0HlPMBcNxDFyigWMJI-xUJCNJAbklQ/fill/512/512/no/1/bG9jYWw6Ly8vYmFyLXBsYWNlaG9sZGVyLnBuZw.jpg'
 
+	function visitString() {
+		if (bar.visited_at) {
+			return localDate(bar.visited_at)
+		}
+		return null
+	}
+
 	function handleVisitBar() {
 		if (bar.visited_at) {
 			// TODO: Remove visit
@@ -26,21 +33,14 @@
 	<img alt={bar.name} class="bar-image" src={bar.imageurl ?? placeholder} />
 	<div class="bar-content">
 		<h3>{bar.name}</h3>
-		<p>{bar.description ?? 'No Description'}</p>
+		<p>Linnaeusstraat 48 • <span class="area">Oud-Oost</span></p>
+
 		{#if isLoggedIn}
-			<p>
-				<button
-					on:click={() => handleVisitBar()}
-					class="visit-button outline"
-					class:visited={bar.visited_at}
-				>
-					{#if bar.visited_at}
-						<span class="checkmark"><Checkmark /></span> {localDate(bar.visited_at)}
-					{:else}
-						Mark Visited
-					{/if}
-				</button>
-			</p>
+			{#if bar.visited_at}
+				<span data-tooltip={visitString()} class="checkmark"><Checkmark /></span>
+			{:else}
+				<button on:click={handleVisitBar} class="visit-button outline">Check in</button>
+			{/if}
 		{/if}
 	</div>
 </article>
@@ -51,8 +51,8 @@
 	}
 
 	.bar-image {
-		width: 10rem;
-		height: 10rem;
+		width: 6rem;
+		height: 6rem;
 		margin: 0 var(--pico-block-spacing-horizontal);
 		border-radius: var(--pico-border-radius);
 		max-width: 100%;
@@ -73,21 +73,17 @@
 		border-color: var(--pico-primary);
 	}
 
-	.visit-button:not(.visited):hover {
+	.visit-button:hover {
 		transform: scale(1.05);
 	}
 
-	.visit-button.visited {
-		color: var(--pico-color-green-400);
-		border-color: var(--pico-color-green-400);
-		cursor: auto;
+	.checkmark {
+		float: right;
+		width: 1.5em;
+		border-bottom: none;
 	}
 
-	.checkmark {
-		width: 1em;
-		display: inline-block;
-		vertical-align: middle;
-		margin-right: 2px;
-		margin-bottom: 0.1em;
+	.area {
+		white-space: nowrap;
 	}
 </style>

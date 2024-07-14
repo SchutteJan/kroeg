@@ -5,6 +5,19 @@ diesel::table! {
     use diesel::sql_types::*;
     use crate::db::sql_types::*;
 
+    areas (id) {
+        id -> Int4,
+        name -> Varchar,
+        area -> Geometry,
+        area_type -> AreaType,
+    }
+}
+
+diesel::table! {
+    use postgis_diesel::sql_types::*;
+    use diesel::sql_types::*;
+    use crate::db::sql_types::*;
+
     locations (id) {
         id -> Int4,
         name -> Varchar,
@@ -64,6 +77,7 @@ diesel::joinable!(visits -> locations (location_id));
 diesel::joinable!(visits -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
+    areas,
     locations,
     spatial_ref_sys,
     users,

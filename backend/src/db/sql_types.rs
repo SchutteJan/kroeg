@@ -51,3 +51,7 @@ impl FromSql<UserRole, Pg> for UserRoleEnum {
         }
     }
 }
+
+#[derive(SqlType)]
+#[diesel(postgres_type(name = "AreaType"))]
+pub struct AreaType;

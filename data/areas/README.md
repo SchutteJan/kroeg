@@ -26,3 +26,13 @@ jq ".features[].properties.Gebied" areas.json
 # Generate SQL import data for areas table
 poerty run python render_template.py
 ```
+
+
+## Example queries
+
+```postgresql
+SELECT an_location.name, ST_Contains(an_area.area, an_location.coordinates) As areacontainslocation
+FROM
+    (SELECT area FROM areas WHERE name = 'Oud-Oost') As an_area,
+    (SELECT coordinates, name FROM locations) As an_location;
+```

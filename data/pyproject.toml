@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "kroeg-data"
+version = "0.1.0"
+description = "Python tools for importing various data sources"
+authors = ["Jan Schutte <4732389+SchutteJan@users.noreply.github.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+Jinja2 = "^3.1.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

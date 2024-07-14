@@ -1,0 +1,4 @@
+{% for feature in features %}
+INSERT INTO "areas" ("name", "area", "area_type")
+VALUES ('{{ feature.properties.Gebied }}', ST_GeomFromGeoJSON('{{ feature.geometry | tojson }}'), 'area');
+{% endfor %}

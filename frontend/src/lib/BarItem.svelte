@@ -48,11 +48,6 @@
 <style>
 	.bar-item {
 		display: flex;
-		transition: transform 0.1s ease-in-out;
-	}
-
-	.bar-item:hover {
-		transform: scale(1.01);
 	}
 
 	.bar-image {
@@ -70,11 +65,16 @@
 	}
 
 	.visit-button {
+		transition: transform 0.1s ease-in-out;
 		border-radius: 999rem;
 		padding: 0.5rem 0.75rem 0.5rem 0.75rem;
 		float: right;
-		color: var(--pico-color-zinc-200);
-		border-color: var(--pico-color-zinc-200);
+		color: var(--pico-primary);
+		border-color: var(--pico-primary);
+	}
+
+	.visit-button:not(.visited):hover {
+		transform: scale(1.05);
 	}
 
 	.visit-button.visited {

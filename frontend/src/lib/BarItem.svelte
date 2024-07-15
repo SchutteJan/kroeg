@@ -33,7 +33,8 @@
 	<img alt={bar.name} class="bar-image" src={bar.imageurl ?? placeholder} />
 	<div class="bar-content">
 		<h3>{bar.name}</h3>
-		<p>Linnaeusstraat 48 • <span class="area">Oud-Oost</span></p>
+
+		<p>{bar.address_line} • <span class="area">Oud-Oost</span></p>
 
 		{#if isLoggedIn}
 			{#if bar.visited_at}

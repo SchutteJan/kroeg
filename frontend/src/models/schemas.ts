@@ -17,6 +17,7 @@ export interface ExportedSchemas {
 	_user: [Login, WhoResponse, VisitStats]
 }
 export interface LocationResponse {
+	address_line: string
 	coordinates: Point
 	description?: string | null
 	id: number
@@ -42,5 +43,4 @@ export interface WhoResponse {
 }
 export interface VisitStats {
 	distinct_bar_visits: number
-	total_bar_visits: number
 }

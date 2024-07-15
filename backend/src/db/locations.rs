@@ -34,6 +34,7 @@ pub async fn get_bars_with_visits(
                 locations::description,
                 locations::coordinates,
                 locations::imageurl,
+                locations::address_line,
                 visits::visited_at.nullable(),
             ))
             .load(c)

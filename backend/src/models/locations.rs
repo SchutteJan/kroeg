@@ -19,6 +19,7 @@ pub struct Location {
     pub osm_node_id: Option<String>,
     pub google_place_id: Option<String>,
     pub imageurl: Option<String>,
+    pub address_line: String,
 }
 
 #[derive(Serialize, JsonSchema, Queryable)]
@@ -28,6 +29,7 @@ pub struct LocationResponse {
     pub description: Option<String>,
     pub coordinates: Point,
     pub imageurl: Option<String>,
+    pub address_line: String,
     pub visited_at: Option<NaiveDateTime>,
 }
 
@@ -41,6 +43,7 @@ pub struct NewLocation {
     pub osm_node_id: Option<String>,
     pub google_place_id: Option<String>,
     pub imageurl: Option<String>,
+    pub address_line: Option<String>,
 }
 
 impl NewLocation {
@@ -57,6 +60,7 @@ impl NewLocation {
             osm_node_id: bar.osm_node_id.clone(),
             google_place_id: bar.google_place_id.clone(),
             imageurl: bar.imageurl.clone(),
+            address_line: bar.address_line.clone(),
         }
     }
 }
@@ -70,6 +74,7 @@ impl From<&Location> for LocationResponse {
             coordinates: l.coordinates,
             imageurl: l.imageurl.clone(),
             visited_at: None,
+            address_line: l.address_line.clone(),
         }
     }
 }

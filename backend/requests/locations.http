@@ -17,7 +17,8 @@ Accept: application/json
   "description": "Description",
   "osm_node_id": "123ASD",
   "google_place_id": "123ASD",
-  "imageurl": "https://loremflickr.com/400/400/cat"
+  "imageurl": "https://loremflickr.com/400/400/cat",
+  "address_line": "Example street 1"
 }
 
 ### Visit location

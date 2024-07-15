@@ -1123,8 +1123,9 @@ dependencies = [
 
 [[package]]
 name = "postgis_diesel"
-version = "2.3.1"
-source = "git+https://github.com/SchutteJan/postgis-diesel/?branch=feature/schemars#0623377dbc597fb371fe4c7471eaffb7dec64634"
+version = "2.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f400a855195746f648f50fad9cb9f1246144809ef769850f6b5122fcd4cf48a6"
 dependencies = [
  "byteorder",
  "diesel",

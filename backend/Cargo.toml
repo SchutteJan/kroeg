@@ -24,8 +24,7 @@ rocket = { version = "=0.5.0", features = ["json", "secrets"] }
 rocket_sync_db_pools = { version = "0.1.0", features = ["diesel_postgres_pool"] }
 diesel = { version = "2.1.6", features = ["postgres", "chrono"] }
 diesel_migrations = {version = "2.2.0"}
-#postgis_diesel = { version = "2.3.1", features = ["serde"] }
-postgis_diesel = { git = "https://github.com/SchutteJan/postgis-diesel/", branch="feature/schemars", features = ["serde", "schemars"] }
+postgis_diesel = { version = "2.4.0", features = ["serde", "schemars"] }
 schemars = { version = "0.8.20", features = ["chrono"] }
 chrono = { version = "0.4.38", features = ["serde"] }
 futures = "0.3.30"

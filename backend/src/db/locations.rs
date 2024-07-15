@@ -5,7 +5,7 @@ use diesel::{
 };
 
 use crate::db::DbConn;
-use crate::models::locations::{Location, LocationResponse, NewLocation};
+use crate::models::locations::{Location, LocationResponse, NewLocation, UpdateLocation};
 
 pub async fn get_bars(conn: &DbConn) -> Result<Vec<Location>, Error> {
     use crate::schema::locations::dsl::*;
@@ -60,6 +60,22 @@ pub async fn delete_bar_by_id(conn: &DbConn, bar_id: i32) -> Result<usize, Error
     conn.run(move |c| {
         diesel::delete(locations::table)
             .filter(id.eq(bar_id))
+            .execute(c)
+    })
+    .await
+}
+
+pub async fn update_bar_by_id(
+    conn: &DbConn,
+    bar_id: i32,
+    bar: UpdateLocation,
+) -> Result<usize, Error> {
+    use crate::schema::locations;
+    use crate::schema::locations::id;
+
+    conn.run(move |c| {
+        diesel::update(locations::table.filter(id.eq(bar_id)))
+            .set(&bar)
             .execute(c)
     })
     .await

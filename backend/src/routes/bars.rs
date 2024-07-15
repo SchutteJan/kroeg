@@ -1,5 +1,5 @@
 use kroeg::db::{locations, DbConn};
-use kroeg::models::locations::{LocationResponse, NewLocation};
+use kroeg::models::locations::{LocationResponse, NewLocation, UpdateLocation};
 use kroeg::models::DeleteRequest;
 use rocket::http::Status;
 use rocket::serde::json::Json;
@@ -58,6 +58,16 @@ async fn delete_bar(conn: DbConn, bar: Json<DeleteRequest>, _user: AdminUser) ->
     }
 }
 
+#[patch("/bar/<id>", data = "<bar>")]
+async fn patch_bar(conn: DbConn, id: i32, bar: Json<UpdateLocation>, _user: AdminUser) -> Status {
+    let updated = locations::update_bar_by_id(&conn, id, bar.into_inner()).await;
+    match updated {
+        Ok(0) => Status::NotFound,
+        Ok(_) => Status::Ok,
+        Err(_) => Status::InternalServerError,
+    }
+}
+
 pub fn routes() -> Vec<rocket::Route> {
-    routes![add_bar, bars, delete_bar, visited_bars]
+    routes![add_bar, bars, delete_bar, visited_bars, patch_bar]
 }

@@ -8,7 +8,7 @@ use schemars::JsonSchema;
 
 use crate::schema::locations;
 
-#[derive(Queryable, Selectable, Serialize, Deserialize)]
+#[derive(Queryable, Selectable, Serialize, Deserialize, Identifiable)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Location {
     pub id: i32,
@@ -43,6 +43,19 @@ pub struct NewLocation {
     pub osm_node_id: Option<String>,
     pub google_place_id: Option<String>,
     pub imageurl: Option<String>,
+    pub address_line: Option<String>,
+}
+
+#[derive(Deserialize, Queryable, AsChangeset)]
+#[diesel(table_name = locations)]
+pub struct UpdateLocation {
+    pub name: Option<String>,
+    pub coordinates: Option<Point>,
+    pub published: Option<bool>,
+    pub description: Option<Option<String>>,
+    pub osm_node_id: Option<Option<String>>,
+    pub google_place_id: Option<Option<String>>,
+    pub imageurl: Option<Option<String>>,
     pub address_line: Option<String>,
 }
 

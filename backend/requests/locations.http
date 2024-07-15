@@ -21,6 +21,17 @@ Accept: application/json
   "address_line": "Example street 1"
 }
 
+
+### Update location
+PATCH {{base}}/bar/6
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Updated location",
+  "address_line": "Example street 2"
+}
+
 ### Visit location
 POST {{base}}/visit/bar/1
 Content-Type: application/json

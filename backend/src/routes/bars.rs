@@ -1,3 +1,4 @@
+use diesel::result::Error;
 use kroeg::db::{locations, DbConn};
 use kroeg::models::locations::{LocationResponse, NewLocation, UpdateLocation};
 use kroeg::models::DeleteRequest;
@@ -61,10 +62,15 @@ async fn delete_bar(conn: DbConn, bar: Json<DeleteRequest>, _user: AdminUser) ->
 #[patch("/bar/<id>", data = "<bar>")]
 async fn patch_bar(conn: DbConn, id: i32, bar: Json<UpdateLocation>, _user: AdminUser) -> Status {
     let updated = locations::update_bar_by_id(&conn, id, bar.into_inner()).await;
+
     match updated {
         Ok(0) => Status::NotFound,
         Ok(_) => Status::Ok,
-        Err(_) => Status::InternalServerError,
+        Err(err) => match err {
+            Error::NotFound => Status::NotFound,
+            Error::QueryBuilderError(_) => Status::BadRequest,
+            _ => Status::InternalServerError,
+        },
     }
 }
 

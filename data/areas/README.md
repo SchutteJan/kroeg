@@ -18,7 +18,7 @@ https://maps.amsterdam.nl/open_geodata/
 
 ```bash
 cd data/areas
-curl 'https://maps.amsterdam.nl/open_geodata/geojson_lnglat.php?KAARTLAAG=INDELING_GEBIED&THEMA=gebiedsindeling' > areas.json
+curl 'https://maps.amsterdam.nl/open_geodata/geojson_latlng.php?KAARTLAAG=INDELING_GEBIED&THEMA=gebiedsindeling' > areas.json
 
 # Inspect all area names:
 jq ".features[].properties.Gebied" areas.json

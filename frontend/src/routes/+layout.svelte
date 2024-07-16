@@ -38,6 +38,7 @@
 		<a href="/" class="contrast header-logo">Kroegen 🍺</a>
 		<nav>
 			<ul>
+				<li><a href="/map" class="contrast">Map</a></li>
 				{#if userData}
 					<li><a href="/me" class="contrast">Me</a></li>
 				{:else}

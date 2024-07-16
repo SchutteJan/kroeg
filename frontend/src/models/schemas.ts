@@ -5,16 +5,39 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+export type AreaTypeEnum = 'Neighbourhood' | 'District' | 'Area' | 'Borough'
 export type Email = string
 export type UserRoleEnum = 'Admin' | 'User'
 
 export interface ExportedSchemas {
+	_area: Area
 	_location_response: LocationResponse
 	/**
 	 * @minItems 3
 	 * @maxItems 3
 	 */
 	_user: [Login, WhoResponse, VisitStats]
+}
+export interface Area {
+	area: PolygonFor_Point
+	area_type: AreaTypeEnum
+	id: number
+	name: string
+}
+/**
+ * Use that structure in `Insertable` or `Queryable` struct if you work with Polygon geometry. ``` #[macro_use] extern crate diesel; use postgis_diesel::types::{Polygon,Point}; #[derive(Queryable)] struct QueryablePolygonExample { id: i32, polygon: Polygon<Point>, } ```
+ */
+export interface PolygonFor_Point {
+	rings: Point[][]
+	srid?: number | null
+}
+/**
+ * Use that structure in `Insertable` or `Queryable` struct if you work with Point geometry. ``` #[macro_use] extern crate diesel; use postgis_diesel::types::Point; #[derive(Queryable)] struct QueryablePointExample { id: i32, point: Point, } ```
+ */
+export interface Point {
+	srid?: number | null
+	x: number
+	y: number
 }
 export interface LocationResponse {
 	address_line: string
@@ -24,14 +47,6 @@ export interface LocationResponse {
 	imageurl?: string | null
 	name: string
 	visited_at?: string | null
-}
-/**
- * Use that structure in `Insertable` or `Queryable` struct if you work with Point geometry. ``` #[macro_use] extern crate diesel; use postgis_diesel::types::Point; #[derive(Queryable)] struct QueryablePointExample { id: i32, point: Point, } ```
- */
-export interface Point {
-	srid?: number | null
-	x: number
-	y: number
 }
 export interface Login {
 	email: Email

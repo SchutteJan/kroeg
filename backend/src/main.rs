@@ -54,6 +54,7 @@ fn rocket() -> _ {
         .attach(AdHoc::config::<Config>())
         .attach(AdHoc::try_on_ignite("Database Migrations", run_migrations))
         .mount("/", routes::bars::routes())
+        .mount("/", routes::areas::routes())
         .mount("/", FileServer::from(config.static_file_path))
         .mount("/session", routes::session::routes())
         .mount("/visit", routes::visits::routes())

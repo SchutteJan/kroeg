@@ -55,3 +55,25 @@ impl FromSql<UserRole, Pg> for UserRoleEnum {
 #[derive(SqlType)]
 #[diesel(postgres_type(name = "AreaType"))]
 pub struct AreaType;
+
+#[derive(Debug, PartialEq, FromSqlRow, AsExpression, Eq, Serialize, JsonSchema)]
+#[diesel(sql_type = UserRole)]
+#[repr(i32)]
+pub enum AreaTypeEnum {
+    Neighbourhood, // Buurt
+    District,      // Wijk
+    Area,          // gebied
+    Borough,       // stadsdeel
+}
+
+impl FromSql<AreaType, Pg> for AreaTypeEnum {
+    fn from_sql(bytes: PgValue<'_>) -> deserialize::Result<Self> {
+        match bytes.as_bytes() {
+            b"neighbourhood" => Ok(AreaTypeEnum::Neighbourhood),
+            b"district" => Ok(AreaTypeEnum::District),
+            b"area" => Ok(AreaTypeEnum::Area),
+            b"borough" => Ok(AreaTypeEnum::Borough),
+            _ => Err("Unrecognized enum variant".into()),
+        }
+    }
+}

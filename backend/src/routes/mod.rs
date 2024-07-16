@@ -1,8 +1,9 @@
 use rocket::serde::Serialize;
 
+pub mod areas;
 pub mod bars;
 pub mod session;
-pub(crate) mod visits;
+pub mod visits;
 
 // Is this the best location for these types??
 #[derive(Serialize)]

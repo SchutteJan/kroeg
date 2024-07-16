@@ -1,3 +1,4 @@
+pub mod areas;
 pub mod locations;
 pub mod users;
 pub mod visits;

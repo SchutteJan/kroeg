@@ -12,9 +12,7 @@ async fn bars(conn: DbConn) -> Result<Json<Vec<LocationResponse>>, Status> {
     let bars = locations::get_bars(&conn).await;
 
     match bars {
-        Ok(bar_list) => Ok(Json(
-            bar_list.iter().map(|l| LocationResponse::from(l)).collect(),
-        )),
+        Ok(bar_list) => Ok(Json(bar_list)),
         Err(_) => Err(Status::InternalServerError),
     }
 }

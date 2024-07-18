@@ -34,7 +34,10 @@
 	<div class="bar-content">
 		<h3>{bar.name}</h3>
 
-		<p>{bar.address_line} • <span class="area">Oud-Oost</span></p>
+		<p>
+			{bar.address_line} •
+			<span class="area">{bar.area_name ? bar.area_name : 'Unknown Area'}</span>
+		</p>
 
 		{#if isLoggedIn}
 			{#if bar.visited_at}

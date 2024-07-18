@@ -3,21 +3,41 @@ use diesel::{
     BoolExpressionMethods, ExpressionMethods, JoinOnDsl, NullableExpressionMethods, QueryDsl,
     RunQueryDsl, SelectableHelper,
 };
+use postgis_diesel::functions::st_contains;
 
 use crate::db::DbConn;
 use crate::models::locations::{Location, LocationResponse, NewLocation, UpdateLocation};
 
-pub async fn get_bars(conn: &DbConn) -> Result<Vec<Location>, Error> {
+pub async fn get_bars(conn: &DbConn) -> Result<Vec<LocationResponse>, Error> {
+    use crate::schema::areas;
     use crate::schema::locations::dsl::*;
 
-    conn.run(|c| locations.filter(published.eq(true)).load(c))
-        .await
+    conn.run(|c| {
+        locations
+            .filter(published.eq(true))
+            .left_join(areas::table.on(st_contains(areas::area, coordinates)))
+            .select((
+                id,
+                name,
+                description,
+                coordinates,
+                imageurl,
+                address_line,
+                diesel::dsl::sql::<diesel::sql_types::Nullable<diesel::sql_types::Timestamp>>(
+                    "NULL",
+                ),
+                areas::name.nullable(),
+            ))
+            .load(c)
+    })
+    .await
 }
 
 pub async fn get_bars_with_visits(
     user_id: i32,
     conn: &DbConn,
 ) -> Result<Vec<LocationResponse>, Error> {
+    use crate::schema::areas;
     use crate::schema::locations;
     use crate::schema::visits;
 
@@ -28,6 +48,7 @@ pub async fn get_bars_with_visits(
                     .eq(locations::id)
                     .and(visits::user_id.eq(user_id))),
             )
+            .left_join(areas::table.on(st_contains(areas::area, locations::coordinates)))
             .select((
                 locations::id,
                 locations::name,
@@ -36,6 +57,7 @@ pub async fn get_bars_with_visits(
                 locations::imageurl,
                 locations::address_line,
                 visits::visited_at.nullable(),
+                areas::name.nullable(),
             ))
             .load(c)
     })

@@ -31,6 +31,7 @@ pub struct LocationResponse {
     pub imageurl: Option<String>,
     pub address_line: String,
     pub visited_at: Option<NaiveDateTime>,
+    pub area_name: Option<String>,
 }
 
 #[derive(Deserialize, Insertable)]
@@ -88,6 +89,7 @@ impl From<&Location> for LocationResponse {
             imageurl: l.imageurl.clone(),
             visited_at: None,
             address_line: l.address_line.clone(),
+            area_name: None,
         }
     }
 }

@@ -41,6 +41,7 @@ export interface Point {
 }
 export interface LocationResponse {
 	address_line: string
+	area_name?: string | null
 	coordinates: Point
 	description?: string | null
 	id: number

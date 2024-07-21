@@ -1,4 +1,4 @@
-FROM rust:1.78.0 as build-backend
+FROM rust:1.79.0 as build-backend
 
 WORKDIR /home/app
 
@@ -7,7 +7,7 @@ COPY backend .
 RUN cargo build --release && \
     target/release/export-schemas > schemas.jsonschema
 
-FROM node:20.5.1 as build-frontend
+FROM node:22.5 as build-frontend
 
 WORKDIR /home/app
 
@@ -20,7 +20,7 @@ RUN npx json2ts --additionalProperties false -i schemas.jsonschema -o src/models
     npm run build
 
 
-FROM debian:12.5-slim
+FROM debian:12.6-slim
 
 WORKDIR /opt/kroeg
 

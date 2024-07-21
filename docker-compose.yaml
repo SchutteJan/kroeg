@@ -10,6 +10,7 @@ services:
     environment:
       # This key is not used in production, don't worry
       - ROCKET_SECRET_KEY=l0arkbZC8Uz48KEmeCfC3X9lmDMhoY1U6OzgUMm/pD8=
+      - ROCKET_LOG_LEVEL=NORMAL
   db:
     image: postgis/postgis:15-3.3
     volumes:

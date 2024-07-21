@@ -1,0 +1,13 @@
+{% for loc in locations %}
+INSERT INTO "locations" ("name", "coordinates", "published", "description", "osm_node_id", "google_place_id", "imageurl", "address_line")
+VALUES (
+    '{{ loc.properties.zaaknaam | replace("'", "''") }}',
+    ST_FlipCoordinates(ST_GeomFromGeoJSON('{{ loc.geometry | tojson }}')),
+    '1',
+    '{{ loc.properties.zaak_specificatie }}',
+    NULL,
+    NULL,
+    NULL,
+    '{{ loc.properties.adres | replace("'", "''")  }}'
+);
+{% endfor %}

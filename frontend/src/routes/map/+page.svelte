@@ -12,17 +12,22 @@
 			L.circle([bar.coordinates.x, bar.coordinates.y], {
 				color: 'red',
 				fillColor: '#f03',
-				fillOpacity: 0.5,
-				radius: 10
+				fillOpacity: 0.2,
+				radius: 5
 			})
 				.bindPopup(bar.name)
+				.bringToFront()
 				.addTo(map)
 		})
 	}
 
 	function addAreaAnnotations(L: any, map: any, areas: Array<Area>) {
 		areas.forEach((area) => {
-			L.polygon(area.area.rings.map((ring) => ring.map((point) => [point.x, point.y])))
+			L.polygon(
+				area.area.rings.map((ring) => ring.map((point) => [point.x, point.y])),
+				// #0172ad is equivalent to --pico-primary
+				{ color: '#0172ad', fillOpacity: '0.1' }
+			)
 				.bindPopup(area.name)
 				.addTo(map)
 		})
@@ -34,24 +39,24 @@
 		// Amsterdam center
 		const map = L.map(mapElement).setView([52.3694028, 4.9012861], 13)
 
-		// https://www.openstreetmap.fr/fonds-de-carte/
-		L.tileLayer('https://b.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+		// https://api.data.amsterdam.nl/api/
+		L.tileLayer('https://t2.data.amsterdam.nl/topo_wm_light/{z}/{x}/{y}.png', {
 			maxZoom: 19,
-			attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			attribution: '&copy; Gemeente Amsterdam'
 		}).addTo(map)
-
-		// Load bar annotations
-		get_bars()
-			.then((response) => response.json())
-			.then((bars) => {
-				addBarMapAnnotations(L, map, bars)
-			})
 
 		// Load area polygons
 		get_areas()
 			.then((response) => response.json())
 			.then((areas) => {
 				addAreaAnnotations(L, map, areas)
+			})
+
+		// Load bar annotations
+		get_bars()
+			.then((response) => response.json())
+			.then((bars) => {
+				addBarMapAnnotations(L, map, bars)
 			})
 	})
 </script>
@@ -63,6 +68,6 @@
 
 <style>
 	#map {
-		height: 500px;
+		height: 75vh;
 	}
 </style>

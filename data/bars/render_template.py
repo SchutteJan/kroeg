@@ -168,6 +168,7 @@ def prepare_data(data: Iterable[Feature]) -> List[Feature]:
     ]
 
     # Some restaurants are also cafes, we try to pull some additional cafes from there
+    # TODO: verify we actually need that
     restaurant_operations = [
         filter_on_restaurants,
         filter_on_restaurant_name,
@@ -182,7 +183,7 @@ def prepare_data(data: Iterable[Feature]) -> List[Feature]:
     for operation in restaurant_operations:
         restaurant_data = apply_filter(restaurant_data, operation)
 
-    return list(restaurant_data)
+    return list(cafe_data)  # + list(restaurant_data)
 
 
 def main() -> None:

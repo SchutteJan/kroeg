@@ -3,11 +3,15 @@ name = "kroeg-data"
 version = "0.1.0"
 description = "Python tools for importing various data sources"
 authors = ["Jan Schutte <4732389+SchutteJan@users.noreply.github.com>"]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
 Jinja2 = "^3.1.4"
 
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.11.0"
 
 [build-system]
 requires = ["poetry-core"]

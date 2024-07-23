@@ -50,3 +50,9 @@ repos:
         description: Check commit message adheres to conventional commit format
         entry: scripts/commit-msg
         language: system
+    -   id: mypy
+        name: mypy strict
+        verbose: true
+        entry: ./scripts/run_mypy.sh
+        language: python
+        'types_or': [python, pyi]

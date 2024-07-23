@@ -15,6 +15,8 @@ from typing import (
 )
 import json
 
+from gmaps import get_likeliest_place
+
 GeoJsonStr = str
 
 MANUAL_ZAAK_NAAM_REPLACEMENTS: Final[Dict[str, str]] = {
@@ -64,6 +66,14 @@ class Properties:
     tijdelijk_terras_details: Optional[str]
     status_verlenging_tijdelijk_terras: Optional[str]
     verlenging_tijdelijk_terras_details: Optional[str]
+
+    # Additional properties added by enriching with Google Maps
+    google_place_id: Optional[str] = None
+
+    def format_sql_google_place_id(self) -> str:
+        if self.google_place_id:
+            return f"'{self.google_place_id}'"
+        return "NULL"
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Properties":
@@ -135,6 +145,22 @@ def filter_hotels(f: Feature) -> Tuple[bool, Feature]:
     return "hotel" not in f.properties.zaaknaam.lower(), f
 
 
+def filter_and_enrich_using_gmaps(f: Feature) -> Tuple[bool, Feature]:
+    lng, lat = json.loads(f.geometry)["coordinates"]
+    if not f.properties.zaaknaam:
+        return False, f
+
+    result = get_likeliest_place(f.properties.zaaknaam, f.properties.adres, (lat, lng))
+    if result is None:
+        return False, f
+
+    # print(f.properties.zaaknaam, " -> ", result["name"])
+    f.properties.zaaknaam = result["name"]
+    f.properties.google_place_id = result["place_id"]
+
+    return True, f
+
+
 def manual_substitutions_zaaknaam(f: Feature) -> Tuple[bool, Feature]:
     if f.properties.zaaknaam in MANUAL_ZAAK_NAAM_REPLACEMENTS:
         f.properties.zaaknaam = MANUAL_ZAAK_NAAM_REPLACEMENTS[f.properties.zaaknaam]
@@ -165,6 +191,7 @@ def prepare_data(data: Iterable[Feature]) -> List[Feature]:
         filter_manual_exclusions,
         manual_substitutions_zaaknaam,
         beautify_zaaknaam,
+        filter_and_enrich_using_gmaps,
     ]
 
     # Some restaurants are also cafes, we try to pull some additional cafes from there
@@ -192,9 +219,10 @@ def main() -> None:
     print(f"Data points before filtering: {len(dataset)}")
     prepared_data = prepare_data(dataset)
     print(f"Data points after filtering: {len(prepared_data)}")
-    # for d in prepared_data:
-    #     print(d.properties.zaaknaam, ":", d.properties.zaak_specificatie)
-    print(template.render(features=prepared_data))
+    sql = template.render(features=prepared_data)
+
+    print("Wrote to bars-export.sql")
+    Path("bars-export.sql").write_text(sql)
 
 
 if __name__ == "__main__":

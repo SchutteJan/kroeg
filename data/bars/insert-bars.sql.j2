@@ -6,7 +6,7 @@ VALUES (
     '1',
     '{{ f.properties.zaak_specificatie }}',
     NULL,
-    NULL,
+    {{ f.properties.format_sql_google_place_id() }},
     NULL,
     '{{ f.properties.adres | replace("'", "''")  }}'
 );

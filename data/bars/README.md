@@ -3,6 +3,8 @@
 Verleende exploitatievergunningen horeca met terrasgrenzen en ontheffingen
 https://data.amsterdam.nl/data/datasets/GsY50tEkoJKCGw/verleende-exploitatievergunningen-horeca-met-terrasgrenzen-en-ontheffingen?term=Verleende+exploitatievergunningen+horeca+met+terrasgrenzen+en+ontheffingen
 
+https://www.amsterdam.nl/ondernemen/horeca/horeca-kaart/
+
 https://api.data.amsterdam.nl/dcatd/datasets/GsY50tEkoJKCGw
 
 

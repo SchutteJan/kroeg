@@ -20,7 +20,7 @@ pub struct Location {
     pub google_place_id: Option<String>,
     pub imageurl: Option<String>,
     pub address_line: String,
-    pub gem_ams_id: Option<i32>,
+    pub gem_ams_id: Option<i64>,
 }
 
 #[derive(Serialize, JsonSchema, Queryable)]
@@ -47,7 +47,7 @@ pub struct NewLocation {
     pub google_place_id: Option<String>,
     pub imageurl: Option<String>,
     pub address_line: Option<String>,
-    pub gem_ams_id: Option<i32>,
+    pub gem_ams_id: Option<i64>,
 }
 
 #[derive(Deserialize, Queryable, AsChangeset)]
@@ -61,7 +61,7 @@ pub struct UpdateLocation {
     pub google_place_id: Option<Option<String>>,
     pub imageurl: Option<Option<String>>,
     pub address_line: Option<String>,
-    pub gem_ams_id: Option<Option<i32>>,
+    pub gem_ams_id: Option<Option<i64>>,
 }
 
 impl NewLocation {

@@ -1,0 +1,1 @@
+ALTER TABLE locations ALTER COLUMN gem_ams_id TYPE INTEGER;

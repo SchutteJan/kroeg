@@ -28,7 +28,7 @@ diesel::table! {
         google_place_id -> Nullable<Varchar>,
         imageurl -> Nullable<Text>,
         address_line -> Varchar,
-        gem_ams_id -> Nullable<Int4>,
+        gem_ams_id -> Nullable<Int8>,
     }
 }
 

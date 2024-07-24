@@ -1,5 +1,5 @@
 {% for f in features %}
-INSERT INTO "locations" ("name", "coordinates", "published", "description", "osm_node_id", "google_place_id", "imageurl", "address_line")
+INSERT INTO "locations" ("name", "coordinates", "published", "description", "osm_node_id", "google_place_id", "imageurl", "address_line", "gem_ams_id")
 VALUES (
     '{{ f.properties.zaaknaam | replace("'", "''") }}',
     ST_FlipCoordinates(ST_GeomFromGeoJSON('{{ f.geometry }}')),
@@ -8,6 +8,7 @@ VALUES (
     NULL,
     {{ f.properties.format_sql_google_place_id() }},
     NULL,
-    '{{ f.properties.adres | replace("'", "''")  }}'
+    '{{ f.properties.adres | replace("'", "''")  }}',
+    {{ f.properties.id }}
 );
 {% endfor %}

@@ -8,9 +8,6 @@ import os
 cache = Cache("./gmaps_cache")
 
 
-ALLOWED_TYPES = ["bar", "cafe", "restaurant", "establishment"]
-
-
 def get_gmaps_client():
     GMAPS_API: str = os.environ.get("GMAPS_API")
     return googlemaps.Client(key=GMAPS_API)
@@ -51,12 +48,15 @@ def gmaps_place_search(
 
 
 def get_likeliest_place(
-    expected_name: str, address: str, location: Tuple[float, float]
+    expected_name: str,
+    address: str,
+    location: Tuple[float, float],
+    enforce_bar_type: bool = False,
 ) -> Optional[Dict]:
     # Replace - with a space, as Google doesn't format addresses with dashes and it seems to improve search results
     address = address.replace("-", " ")
 
-    # location latitude/longitude
+    # Not passing a type parameter can result in better search results, we will check for it later
     results = gmaps_place_search(
         f"{expected_name}, {address}, Amsterdam", location=location, type=None
     )
@@ -83,7 +83,12 @@ def get_likeliest_place(
         return None
 
     # result has any of the ALLOWED_TYPES as type
-    if not any(t in result["types"] for t in ALLOWED_TYPES):
+    allowed_types = (
+        ["bar", "cafe", "restaurant", "establishment"]
+        if not enforce_bar_type
+        else ["bar", "cafe"]
+    )
+    if not any(t in result["types"] for t in allowed_types):
         print(
             f"Result for '{expected_name}' is '{result['name']}' and is not a bar/cafe, but a {result['types']}"
         )

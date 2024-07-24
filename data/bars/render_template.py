@@ -145,12 +145,25 @@ def filter_hotels(f: Feature) -> Tuple[bool, Feature]:
     return "hotel" not in f.properties.zaaknaam.lower(), f
 
 
-def filter_and_enrich_using_gmaps(f: Feature) -> Tuple[bool, Feature]:
+def _filter_and_enrich_using_gmaps(
+    f: Feature, enforce_bar_type: bool
+) -> Tuple[bool, Feature]:
+    """
+    Enable "enforce_bar_types" for stricter search which yields more actual bars, but also yields
+    fewer results than a general address/name search. (Some bars don't show up when searching for
+    the "bar" type)
+    """
     lng, lat = json.loads(f.geometry)["coordinates"]
     if not f.properties.zaaknaam:
         return False, f
 
-    result = get_likeliest_place(f.properties.zaaknaam, f.properties.adres, (lat, lng))
+    result = get_likeliest_place(
+        f.properties.zaaknaam,
+        f.properties.adres,
+        (lat, lng),
+        enforce_bar_type=enforce_bar_type,
+    )
+
     if result is None:
         return False, f
 
@@ -159,6 +172,19 @@ def filter_and_enrich_using_gmaps(f: Feature) -> Tuple[bool, Feature]:
     f.properties.google_place_id = result["place_id"]
 
     return True, f
+
+
+def filter_and_enrich_using_gmaps(f: Feature) -> Tuple[bool, Feature]:
+    """
+    Use Google Maps Place API to cross-reference with Gemeente Amsterdam data.
+    This generally yields better location names and Google keeps better track of bars that are
+    still in business.
+    """
+    return _filter_and_enrich_using_gmaps(f, False)
+
+
+def filter_and_enrich_using_gmaps_enforce_bar(f: Feature) -> Tuple[bool, Feature]:
+    return _filter_and_enrich_using_gmaps(f, True)
 
 
 def manual_substitutions_zaaknaam(f: Feature) -> Tuple[bool, Feature]:
@@ -194,12 +220,12 @@ def prepare_data(data: Iterable[Feature]) -> List[Feature]:
         filter_and_enrich_using_gmaps,
     ]
 
-    # Some restaurants are also cafes, we try to pull some additional cafes from there
-    # TODO: verify we actually need that
+    # Some restaurants are also bars, we try to pull some additional bars from there
     restaurant_operations = [
         filter_on_restaurants,
         filter_on_restaurant_name,
         beautify_zaaknaam,
+        filter_and_enrich_using_gmaps_enforce_bar,
     ]
 
     cafe_data: Iterable[Feature] = data
@@ -210,7 +236,7 @@ def prepare_data(data: Iterable[Feature]) -> List[Feature]:
     for operation in restaurant_operations:
         restaurant_data = apply_filter(restaurant_data, operation)
 
-    return list(cafe_data)  # + list(restaurant_data)
+    return list(cafe_data) + list(restaurant_data)
 
 
 def main() -> None:

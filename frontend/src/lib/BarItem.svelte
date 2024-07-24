@@ -29,24 +29,39 @@
 	}
 </script>
 
-<article class="bar-item">
-	<img alt={bar.name} class="bar-image" src={bar.imageurl ?? placeholder} />
-	<div class="bar-content">
-		<h3>{bar.name}</h3>
+<article>
+	<details>
+		<summary class="bar-item">
+			<img alt={bar.name} class="bar-image" src={bar.imageurl ?? placeholder} />
+			<div class="bar-content">
+				<h3>{bar.name}</h3>
 
+				<p>
+					{bar.address_line} •
+					<span class="area">{bar.area_name ? bar.area_name : 'Unknown Area'}</span>
+				</p>
+
+				{#if isLoggedIn}
+					{#if bar.visited_at}
+						<span data-tooltip={visitString()} class="checkmark"><Checkmark /></span>
+					{:else}
+						<button on:click={handleVisitBar} class="visit-button outline">Check in</button>
+					{/if}
+				{/if}
+			</div>
+		</summary>
+		<hr />
 		<p>
-			{bar.address_line} •
-			<span class="area">{bar.area_name ? bar.area_name : 'Unknown Area'}</span>
-		</p>
-
-		{#if isLoggedIn}
-			{#if bar.visited_at}
-				<span data-tooltip={visitString()} class="checkmark"><Checkmark /></span>
+			{#if bar.description}
+				{bar.description}
 			{:else}
-				<button on:click={handleVisitBar} class="visit-button outline">Check in</button>
+				<i>No description available.</i>
 			{/if}
-		{/if}
-	</div>
+		</p>
+		<a target="_blank" href="https://www.google.com/maps/place/?q=place_id:{bar.google_place_id}"
+			>Open in Maps 🡵</a
+		>
+	</details>
 </article>
 
 <style>
@@ -57,7 +72,6 @@
 	.bar-image {
 		width: 6rem;
 		height: 6rem;
-		margin: 0 var(--pico-block-spacing-horizontal);
 		border-radius: var(--pico-border-radius);
 		max-width: 100%;
 		object-fit: cover;
@@ -66,6 +80,7 @@
 
 	.bar-content {
 		flex-grow: 1;
+		margin-left: var(--pico-block-spacing-horizontal);
 	}
 
 	.visit-button {

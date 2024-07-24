@@ -10,8 +10,7 @@
 	function addBarMapAnnotations(L: any, map: any, bars: Array<LocationResponse>) {
 		bars.forEach((bar) => {
 			L.circle([bar.coordinates.x, bar.coordinates.y], {
-				color: 'red',
-				fillColor: '#f03',
+				color: bar.visited_at ? '#00895A' : '#D93526',
 				fillOpacity: 0.2,
 				radius: 5
 			})

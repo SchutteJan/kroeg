@@ -58,8 +58,11 @@
 				<i>No description available.</i>
 			{/if}
 		</p>
-		<a target="_blank" href="https://www.google.com/maps/place/?q=place_id:{bar.google_place_id}"
-			>Open in Maps 🡵</a
+		<a
+			target="_blank"
+			href="https://www.google.com/maps/search/?api=1&query={encodeURIComponent(
+				bar.address_line
+			)}&query_place_id={bar.google_place_id}">Open in Maps 🡵</a
 		>
 	</details>
 </article>

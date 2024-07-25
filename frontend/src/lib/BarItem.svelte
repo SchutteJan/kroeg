@@ -4,6 +4,7 @@
 	import { user } from '$lib/stores'
 	import { visitBar } from '../api/bars'
 	import Checkmark from './Checkmark.svelte'
+	import Externallink from './Externallink.svelte'
 	export let bar: LocationResponse
 	export let isLoggedIn: boolean = false
 
@@ -62,8 +63,9 @@
 			target="_blank"
 			href="https://www.google.com/maps/search/?api=1&query={encodeURIComponent(
 				bar.address_line
-			)}&query_place_id={bar.google_place_id}">Open in Maps 🡵</a
-		>
+			)}&query_place_id={bar.google_place_id}"
+			>Open in Maps <Externallink />
+		</a>
 	</details>
 </article>
 

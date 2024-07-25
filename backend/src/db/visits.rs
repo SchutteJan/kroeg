@@ -1,7 +1,8 @@
 use diesel::dsl::count_distinct;
 use diesel::result::Error;
-use diesel::{QueryDsl, RunQueryDsl, SelectableHelper};
+use diesel::{JoinOnDsl, QueryDsl, RunQueryDsl, SelectableHelper};
 use futures::try_join;
+use postgis_diesel::functions::st_contains;
 
 use crate::db::DbConn;
 use crate::models::visits::{NewVisit, Visit, VisitStats};
@@ -24,6 +25,7 @@ pub async fn get_user_visit_stats(
 ) -> Result<VisitStats, Error> {
     use diesel::{ExpressionMethods, RunQueryDsl};
 
+    use crate::schema::areas;
     use crate::schema::locations;
     use crate::schema::visits;
 
@@ -36,9 +38,19 @@ pub async fn get_user_visit_stats(
             .first::<i64>(c)
     });
 
-    match try_join!(distinct_bar_visits_fut) {
-        Ok((distinct_bar_visits,)) => Ok(VisitStats {
+    let total_bars_by_area_fut = conn.run(move |c| {
+        locations::table
+            .inner_join(areas::table.on(st_contains(areas::area, locations::coordinates)))
+            .filter(locations::published.eq(true))
+            .group_by(areas::name)
+            .select((areas::name, count_distinct(locations::id)))
+            .load::<(String, i64)>(c)
+    });
+
+    match try_join!(distinct_bar_visits_fut, total_bars_by_area_fut) {
+        Ok((distinct_bar_visits, total_bars_by_area)) => Ok(VisitStats {
             distinct_bar_visits,
+            total_bars_by_area,
         }),
         Err(e) => Err(e),
     }

@@ -59,5 +59,7 @@ export interface WhoResponse {
 	role: UserRoleEnum
 }
 export interface VisitStats {
+	bar_visits_by_area: [string, number][]
 	distinct_bar_visits: number
+	total_bars_by_area: [string, number][]
 }

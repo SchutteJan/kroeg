@@ -24,12 +24,15 @@ pub async fn get_user_visit_stats(
 ) -> Result<VisitStats, Error> {
     use diesel::{ExpressionMethods, RunQueryDsl};
 
-    use crate::schema::visits::dsl::*;
+    use crate::schema::locations;
+    use crate::schema::visits;
 
     let distinct_bar_visits_fut = conn.run(move |c| {
-        visits
-            .select(count_distinct(location_id))
-            .filter(user_id.eq(current_user_id))
+        visits::table
+            .inner_join(locations::table)
+            .select(count_distinct(visits::location_id))
+            .filter(visits::user_id.eq(current_user_id))
+            .filter(locations::published.eq(true))
             .first::<i64>(c)
     });
 

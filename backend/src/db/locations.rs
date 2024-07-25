@@ -44,6 +44,7 @@ pub async fn get_bars_with_visits(
 
     conn.run(move |c| {
         locations::table
+            .filter(locations::published.eq(true))
             .left_join(
                 visits::table.on(visits::location_id
                     .eq(locations::id)

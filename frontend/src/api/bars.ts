@@ -14,3 +14,13 @@ export async function visitBar(id: number): Promise<Response> {
 		}
 	})
 }
+
+export async function hideBar(id: number): Promise<Response> {
+	return fetch(get_api_base_url() + '/bar/' + id, {
+		method: 'PATCH',
+		headers: {
+			Accept: 'application/json'
+		},
+		body: JSON.stringify({ published: false })
+	})
+}

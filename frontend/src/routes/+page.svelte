@@ -19,7 +19,7 @@
 
 <section>
 	<h2>List</h2>
-	<p>All kroegen listed.</p>
+	<p>All {bars.length == 0 ? '' : bars.length} bars in Amsterdam listed.</p>
 
 	<div class="bar-list-container">
 		{#if loading}

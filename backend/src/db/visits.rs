@@ -42,7 +42,7 @@ pub async fn get_user_visit_stats(
         locations::table
             .filter(locations::published.eq(true))
             .inner_join(areas::table.on(st_contains(areas::area, locations::coordinates)))
-            .left_join(
+            .inner_join(
                 visits::table.on(visits::location_id
                     .eq(locations::id)
                     .and(visits::user_id.eq(current_user_id))),

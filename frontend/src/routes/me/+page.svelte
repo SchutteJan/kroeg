@@ -15,11 +15,17 @@
 		})
 	}
 
-	function zipVistsByArea(total_bars: [string, number][], visit_bars: [string, number][]) {
-		let areaMap = new Map<string, [number, number]>()
-		// zip two array together using map: a.map((k, i) => [k, b[i]])
-		// this assumes that the two arrays are sorted in the same order
-		total_bars.map((k, i) => areaMap.set(k[0], [k[1], visit_bars[i][1]]))
+	interface AreaStat {
+		total: number
+		visited: number
+	}
+
+	function zipVistsByArea(total_bars: [string, number][], visited_bars: [string, number][]) {
+		let areaMap = new Map<string, AreaStat>()
+		total_bars.forEach(([name, total]) => {
+			let visited = visited_bars.find(([n, _]) => n === name)?.[1] ?? 0
+			areaMap.set(name, { total, visited: visited })
+		})
 		return areaMap
 	}
 
@@ -63,11 +69,11 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each zipVistsByArea(visitStats.total_bars_by_area, visitStats.bar_visits_by_area).entries() as [name, [total, count]]}
+				{#each zipVistsByArea(visitStats.total_bars_by_area, visitStats.bar_visits_by_area).entries() as [name, stat]}
 					<tr>
 						<td>{name}</td>
-						<td>{total}</td>
-						<td>{count}</td>
+						<td>{stat.total}</td>
+						<td>{stat.visited}</td>
 					</tr>
 				{/each}
 			</tbody>

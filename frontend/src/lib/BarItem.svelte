@@ -88,6 +88,10 @@
 		margin-left: var(--pico-block-spacing-horizontal);
 	}
 
+	.bar-content > h3 {
+		word-break: break-word;
+	}
+
 	.visit-button {
 		transition: transform 0.1s ease-in-out;
 		border-radius: 999rem;

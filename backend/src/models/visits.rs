@@ -28,4 +28,5 @@ pub struct NewVisit {
 pub struct VisitStats {
     pub distinct_bar_visits: i64,
     pub total_bars_by_area: Vec<(String, i64)>,
+    pub bar_visits_by_area: Vec<(String, i64)>,
 }

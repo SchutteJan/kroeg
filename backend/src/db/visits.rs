@@ -1,6 +1,6 @@
 use diesel::dsl::count_distinct;
 use diesel::result::Error;
-use diesel::{JoinOnDsl, QueryDsl, RunQueryDsl, SelectableHelper};
+use diesel::{BoolExpressionMethods, JoinOnDsl, QueryDsl, RunQueryDsl, SelectableHelper};
 use futures::try_join;
 use postgis_diesel::functions::st_contains;
 
@@ -38,19 +38,40 @@ pub async fn get_user_visit_stats(
             .first::<i64>(c)
     });
 
+    let bar_visits_by_area_fut = conn.run(move |c| {
+        locations::table
+            .filter(locations::published.eq(true))
+            .inner_join(areas::table.on(st_contains(areas::area, locations::coordinates)))
+            .left_join(
+                visits::table.on(visits::location_id
+                    .eq(locations::id)
+                    .and(visits::user_id.eq(current_user_id))),
+            )
+            .group_by(areas::name)
+            .select((areas::name, count_distinct(locations::id)))
+            .order_by(areas::name)
+            .load::<(String, i64)>(c)
+    });
+
     let total_bars_by_area_fut = conn.run(move |c| {
         locations::table
             .inner_join(areas::table.on(st_contains(areas::area, locations::coordinates)))
             .filter(locations::published.eq(true))
             .group_by(areas::name)
             .select((areas::name, count_distinct(locations::id)))
+            .order_by(areas::name)
             .load::<(String, i64)>(c)
     });
 
-    match try_join!(distinct_bar_visits_fut, total_bars_by_area_fut) {
-        Ok((distinct_bar_visits, total_bars_by_area)) => Ok(VisitStats {
+    match try_join!(
+        distinct_bar_visits_fut,
+        total_bars_by_area_fut,
+        bar_visits_by_area_fut
+    ) {
+        Ok((distinct_bar_visits, total_bars_by_area, bar_visits_by_area)) => Ok(VisitStats {
             distinct_bar_visits,
             total_bars_by_area,
+            bar_visits_by_area,
         }),
         Err(e) => Err(e),
     }

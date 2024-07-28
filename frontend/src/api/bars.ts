@@ -15,6 +15,15 @@ export async function visitBar(id: number): Promise<Response> {
 	})
 }
 
+export async function deleteVisit(bar_id: number): Promise<Response> {
+	return fetch(get_api_base_url() + '/visit/bar/' + bar_id, {
+		method: 'DELETE',
+		headers: {
+			Accept: 'application/json'
+		}
+	})
+}
+
 export async function hideBar(id: number): Promise<Response> {
 	return fetch(get_api_base_url() + '/bar/' + id, {
 		method: 'PATCH',

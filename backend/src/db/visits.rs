@@ -19,6 +19,21 @@ pub async fn add_visit(new_visit: NewVisit, conn: &DbConn) -> Result<Visit, Erro
     .await
 }
 
+pub async fn delete_visit(user_id: i32, location_id: i32, conn: &DbConn) -> Result<(), Error> {
+    use diesel::{ExpressionMethods, RunQueryDsl};
+
+    use crate::schema::visits;
+
+    conn.run(move |c| {
+        diesel::delete(visits::table)
+            .filter(visits::location_id.eq(location_id))
+            .filter(visits::user_id.eq(user_id))
+            .execute(c)
+    })
+    .await?;
+    Ok(())
+}
+
 pub async fn get_user_visit_stats(
     current_user_id: i32,
     conn: &DbConn,

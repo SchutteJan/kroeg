@@ -2,7 +2,7 @@
 	import type { LocationResponse, WhoResponse } from '../models/schemas'
 	import { localDate } from '$lib/time'
 	import { user } from '$lib/stores'
-	import { hideBar, visitBar } from '../api/bars'
+	import { deleteVisit, hideBar, visitBar } from '../api/bars'
 	import Checkmark from './Checkmark.svelte'
 	import Externallink from './Externallink.svelte'
 	export let bar: LocationResponse
@@ -27,11 +27,15 @@
 		return null
 	}
 
-	function handleVisitBar() {
-		if (bar.visited_at) {
-			// TODO: Remove visit
-			return
+	function handleDeleteBarVisit() {
+		if (confirm(`Are you sure you want to remove your visit to ${bar.name}?`)) {
+			deleteVisit(bar.id).then(() => {
+				bar.visited_at = null
+			})
 		}
+	}
+
+	function handleVisitBar() {
 		visitBar(bar.id).then(() => {
 			bar.visited_at = new Date().toISOString()
 		})
@@ -86,8 +90,15 @@
 			)}&query_place_id={bar.google_place_id}"
 			>Open in Maps <Externallink />
 		</a>
+
 		{#if isLoggedIn && isAdmin && !isHidden}
 			<button class="pico-background-red" on:click={handleHideBar}>Hide</button>
+		{/if}
+
+		{#if isLoggedIn && bar.visited_at}
+			<button class="visit-button visit-button-red outline" on:click={handleDeleteBarVisit}
+				>Remove Visit</button
+			>
 		{/if}
 	</details>
 </article>
@@ -122,6 +133,11 @@
 		float: right;
 		color: var(--pico-primary);
 		border-color: var(--pico-primary);
+	}
+
+	.visit-button-red {
+		color: var(--pico-color-red-400);
+		border-color: var(--pico-color-red-400);
 	}
 
 	.visit-button:hover {

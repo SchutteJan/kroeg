@@ -4,17 +4,37 @@
 	import { get_bars } from '../../api/bars'
 	import { get_areas } from '../../api/areas'
 	import type { Area, LocationResponse } from '../../models/schemas'
+	import MapBarItem from '$lib/MapBarItem.svelte'
 
 	let mapElement: HTMLElement
+	const GREEN = '#00895A'
+	const RED = '#D93526'
+
+	function renderPopup(layer: any, bar: LocationResponse) {
+		let container = document.createElement('div')
+		new MapBarItem({
+			target: container,
+			props: {
+				bar: bar,
+				onVisitCallback: () => {
+					layer._path.style.stroke = GREEN
+					layer._path.style.fill = GREEN
+				}
+			}
+		})
+		return container
+	}
 
 	function addBarMapAnnotations(L: any, map: any, bars: Array<LocationResponse>) {
 		bars.forEach((bar) => {
 			L.circle([bar.coordinates.x, bar.coordinates.y], {
-				color: bar.visited_at ? '#00895A' : '#D93526',
+				color: bar.visited_at ? GREEN : RED,
 				fillOpacity: 0.2,
-				radius: 5
+				radius: 7
 			})
-				.bindPopup(bar.name)
+				.bindPopup((layer: any) => {
+					return renderPopup(layer, bar)
+				})
 				.bringToFront()
 				.addTo(map)
 		})
@@ -25,7 +45,7 @@
 			L.polygon(
 				area.area.rings.map((ring) => ring.map((point) => [point.x, point.y])),
 				// #0172ad is equivalent to --pico-primary
-				{ color: '#0172ad', fillOpacity: '0.1' }
+				{ color: '#0172ad', fill: false }
 			)
 				.bindPopup(area.name)
 				.addTo(map)
@@ -40,7 +60,7 @@
 
 		// https://api.data.amsterdam.nl/api/
 		L.tileLayer('https://t2.data.amsterdam.nl/topo_wm_light/{z}/{x}/{y}.png', {
-			maxZoom: 19,
+			maxZoom: 21,
 			attribution: '&copy; Gemeente Amsterdam'
 		}).addTo(map)
 

@@ -23,10 +23,11 @@
 	}
 
 	onMount(async () => {
-		let me = await whoami()
-		if (me) {
-			user.set(me)
-		}
+		whoami().then((me) => {
+			if (me) {
+				user.set(me)
+			}
+		})
 
 		let dataTheme = document.documentElement.getAttribute('data-theme')
 		darkMode = prefersColorSchemaDark() || dataTheme === 'dark'

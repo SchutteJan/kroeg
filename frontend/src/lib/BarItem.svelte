@@ -68,9 +68,9 @@
 
 				{#if isLoggedIn}
 					{#if bar.visited_at}
-						<span data-tooltip={visitString()} class="checkmark"><Checkmark /></span>
+						<span data-tooltip={visitString()} class="checkmark float"><Checkmark /></span>
 					{:else}
-						<button on:click={handleVisitBar} class="visit-button outline">Check in</button>
+						<button on:click={handleVisitBar} class="visit-button outline float">Check in</button>
 					{/if}
 				{/if}
 			</div>
@@ -126,13 +126,17 @@
 		word-break: break-word;
 	}
 
+	.float {
+		float: right;
+	}
+
 	.visit-button {
 		transition: transform 0.1s ease-in-out;
 		border-radius: 999rem;
 		padding: 0.5rem 0.75rem 0.5rem 0.75rem;
-		float: right;
 		color: var(--pico-primary);
 		border-color: var(--pico-primary);
+		margin-left: 0.3em;
 	}
 
 	.visit-button-red {
@@ -145,7 +149,6 @@
 	}
 
 	.checkmark {
-		float: right;
 		width: 1.5em;
 		border-bottom: none;
 	}

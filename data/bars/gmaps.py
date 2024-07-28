@@ -41,10 +41,13 @@ def get_distance(a: Tuple[float, float], b: Tuple[float, float]) -> float:
 
 @cache.memoize(typed=True)
 def gmaps_place_search(
-    address: str, location: Tuple[float, float], type: Optional[str]
+    address: str,
+    location: Tuple[float, float],
+    type: Optional[str],
+    language: Optional[str] = None,
 ) -> dict:
     gmaps = get_gmaps_client()
-    return gmaps.places(address, location=location, type=type)
+    return gmaps.places(address, location=location, language=language, type=type)
 
 
 def get_likeliest_place(
@@ -58,7 +61,10 @@ def get_likeliest_place(
 
     # Not passing a type parameter can result in better search results, we will check for it later
     results = gmaps_place_search(
-        f"{expected_name}, {address}, Amsterdam", location=location, type=None
+        f"{expected_name}, {address}, Amsterdam",
+        location=location,
+        type=None,
+        language="nl",
     )
 
     if len(results["results"]) == 0:

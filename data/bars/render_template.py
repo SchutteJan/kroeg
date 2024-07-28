@@ -116,6 +116,10 @@ def filter_on_cafes(f: Feature) -> Tuple[bool, Feature]:
     }, f
 
 
+def filter_on_nachtzaak(f: Feature) -> Tuple[bool, Feature]:
+    return f.properties.zaak_categorie in {"Nachtzaak"}, f
+
+
 def filter_on_restaurants(f: Feature) -> Tuple[bool, Feature]:
     return f.properties.zaak_categorie == "Restaurant", f
 
@@ -211,6 +215,11 @@ def beautify_zaaknaam(f: Feature) -> Tuple[bool, Feature]:
 
 def prepare_data(data: Iterable[Feature]) -> List[Feature]:
     """Filter and sanitize data"""
+    nachtzaak_operations = [
+        filter_on_nachtzaak,
+        filter_and_enrich_using_gmaps,
+    ]
+
     cafe_operations = [
         filter_on_cafes,
         filter_coffeeshops,
@@ -236,7 +245,11 @@ def prepare_data(data: Iterable[Feature]) -> List[Feature]:
     for operation in restaurant_operations:
         restaurant_data = apply_filter(restaurant_data, operation)
 
-    return list(cafe_data) + list(restaurant_data)
+    nachtzaak_data: Iterable[Feature] = data
+    for operation in nachtzaak_operations:
+        nachtzaak_data = apply_filter(nachtzaak_data, operation)
+
+    return list(nachtzaak_data) + list(cafe_data) + list(restaurant_data)
 
 
 def main() -> None:

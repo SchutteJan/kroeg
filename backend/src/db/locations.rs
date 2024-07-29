@@ -8,65 +8,69 @@ use postgis_diesel::functions::st_contains;
 use crate::db::DbConn;
 use crate::models::locations::{Location, LocationResponse, NewLocation, UpdateLocation};
 
-pub async fn get_bars(conn: &DbConn) -> Result<Vec<LocationResponse>, Error> {
+pub async fn get_bars(only_published: bool, conn: &DbConn) -> Result<Vec<LocationResponse>, Error> {
     use crate::schema::areas;
     use crate::schema::locations::dsl::*;
 
-    conn.run(|c| {
-        locations
-            .filter(published.eq(true))
-            .left_join(areas::table.on(st_contains(areas::area, coordinates)))
-            .select((
-                id,
-                name,
-                description,
-                google_place_id,
-                coordinates,
-                imageurl,
-                address_line,
-                diesel::dsl::sql::<diesel::sql_types::Nullable<diesel::sql_types::Timestamp>>(
-                    "NULL",
-                ),
-                areas::name.nullable(),
-                gem_ams_id,
-            ))
-            .load(c)
-    })
-    .await
+    let mut query = locations
+        .left_join(areas::table.on(st_contains(areas::area, coordinates)))
+        .select((
+            id,
+            name,
+            description,
+            google_place_id,
+            coordinates,
+            published,
+            imageurl,
+            address_line,
+            diesel::dsl::sql::<diesel::sql_types::Nullable<diesel::sql_types::Timestamp>>("NULL"),
+            areas::name.nullable(),
+            gem_ams_id,
+        ))
+        .into_boxed();
+
+    if only_published {
+        query = query.filter(published.eq(true))
+    }
+    conn.run(|c| query.load(c)).await
 }
 
 pub async fn get_bars_with_visits(
     user_id: i32,
+    only_published: bool,
     conn: &DbConn,
 ) -> Result<Vec<LocationResponse>, Error> {
     use crate::schema::areas;
     use crate::schema::locations;
     use crate::schema::visits;
 
-    conn.run(move |c| {
-        locations::table
-            .filter(locations::published.eq(true))
-            .left_join(
-                visits::table.on(visits::location_id
-                    .eq(locations::id)
-                    .and(visits::user_id.eq(user_id))),
-            )
-            .left_join(areas::table.on(st_contains(areas::area, locations::coordinates)))
-            .select((
-                locations::id,
-                locations::name,
-                locations::description,
-                locations::google_place_id,
-                locations::coordinates,
-                locations::imageurl,
-                locations::address_line,
-                visits::visited_at.nullable(),
-                areas::name.nullable(),
-                locations::gem_ams_id,
-            ))
-            .load(c)
-    })
-    .await
+    let mut query = locations::table
+        .left_join(
+            visits::table.on(visits::location_id
+                .eq(locations::id)
+                .and(visits::user_id.eq(user_id))),
+        )
+        .left_join(areas::table.on(st_contains(areas::area, locations::coordinates)))
+        .select((
+            locations::id,
+            locations::name,
+            locations::description,
+            locations::google_place_id,
+            locations::coordinates,
+            locations::published,
+            locations::imageurl,
+            locations::address_line,
+            visits::visited_at.nullable(),
+            areas::name.nullable(),
+            locations::gem_ams_id,
+        ))
+        .into_boxed();
+
+    if only_published {
+        query = query.filter(locations::published.eq(true));
+    }
+
+    conn.run(move |c| query.load(c)).await
 }
 
 pub async fn add_bar(conn: &DbConn, bar: NewLocation) -> Result<Location, Error> {

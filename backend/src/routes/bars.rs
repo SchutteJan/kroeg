@@ -7,9 +7,12 @@ use rocket::serde::json::Json;
 
 use crate::routes::{AdminUser, BasicUser};
 
-#[get("/bars", rank = 2)]
-async fn bars(conn: DbConn) -> Result<Json<Vec<LocationResponse>>, Status> {
-    let bars = locations::get_bars(&conn).await;
+#[get("/bars?<only_published>", rank = 2)]
+async fn bars(
+    conn: DbConn,
+    only_published: Option<bool>,
+) -> Result<Json<Vec<LocationResponse>>, Status> {
+    let bars = locations::get_bars(only_published.unwrap_or(true), &conn).await;
 
     match bars {
         Ok(bar_list) => Ok(Json(bar_list)),
@@ -17,12 +20,13 @@ async fn bars(conn: DbConn) -> Result<Json<Vec<LocationResponse>>, Status> {
     }
 }
 
-#[get("/bars")]
+#[get("/bars?<only_published>")]
 async fn visited_bars(
     user: BasicUser,
+    only_published: Option<bool>,
     conn: DbConn,
 ) -> Result<Json<Vec<LocationResponse>>, Status> {
-    let bars = locations::get_bars_with_visits(user.0, &conn).await;
+    let bars = locations::get_bars_with_visits(user.0, only_published.unwrap_or(true), &conn).await;
 
     match bars {
         Ok(bar_list) => Ok(Json(bar_list)),

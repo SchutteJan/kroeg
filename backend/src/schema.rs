@@ -78,10 +78,4 @@ diesel::table! {
 diesel::joinable!(visits -> locations (location_id));
 diesel::joinable!(visits -> users (user_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    areas,
-    locations,
-    spatial_ref_sys,
-    users,
-    visits,
-);
+diesel::allow_tables_to_appear_in_same_query!(areas, locations, spatial_ref_sys, users, visits,);

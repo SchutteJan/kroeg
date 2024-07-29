@@ -1,7 +1,9 @@
 import { get_api_base_url } from './base'
 
-export async function get_bars(): Promise<Response> {
-	return fetch(get_api_base_url() + '/bars', {
+export async function get_bars(only_published: boolean = true): Promise<Response> {
+	const queryString = new URLSearchParams({ only_published: only_published.toString() }).toString()
+
+	return fetch(get_api_base_url() + '/bars?' + queryString, {
 		method: 'GET'
 	})
 }
@@ -24,12 +26,12 @@ export async function deleteVisit(bar_id: number): Promise<Response> {
 	})
 }
 
-export async function hideBar(id: number): Promise<Response> {
+export async function setPublished(id: number, published: boolean): Promise<Response> {
 	return fetch(get_api_base_url() + '/bar/' + id, {
 		method: 'PATCH',
 		headers: {
 			Accept: 'application/json'
 		},
-		body: JSON.stringify({ published: false })
+		body: JSON.stringify({ published: published })
 	})
 }

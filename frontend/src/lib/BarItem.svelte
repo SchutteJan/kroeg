@@ -2,14 +2,12 @@
 	import type { LocationResponse, WhoResponse } from '../models/schemas'
 	import { localDate } from '$lib/time'
 	import { user } from '$lib/stores'
-	import { deleteVisit, hideBar, visitBar } from '../api/bars'
+	import { deleteVisit, setPublished, visitBar } from '../api/bars'
 	import Checkmark from './Checkmark.svelte'
 	import Externallink from './Externallink.svelte'
 	export let bar: LocationResponse
 	export let isLoggedIn: boolean = false
 	export let isAdmin: boolean = false
-	// TODO: Expose "published" on LocationResponse?
-	export let isHidden: boolean = false
 
 	user.subscribe((value: WhoResponse | undefined) => {
 		isLoggedIn = value !== undefined
@@ -41,11 +39,12 @@
 		})
 	}
 
-	function handleHideBar() {
-		if (confirm(`Are you sure you want to hide ${bar.name}?`)) {
-			hideBar(bar.id).then(() => {
-				console.log('Hid bar', bar)
-				isHidden = true
+	function toggleHideBar() {
+		const hideStr = bar.published ? 'hide' : 'unhide'
+
+		if (confirm(`Are you sure you want to ${hideStr} ${bar.name}?`)) {
+			setPublished(bar.id, !bar.published).then(() => {
+				bar.published = !bar.published
 			})
 		}
 	}
@@ -56,7 +55,7 @@
 		<summary class="bar-item">
 			<img alt={bar.name} class="bar-image" src={bar.imageurl ?? placeholder} />
 			<div class="bar-content">
-				{#if isHidden}
+				{#if !bar.published}
 					<h3><s>{bar.name}</s></h3>
 				{:else}
 					<h3>{bar.name}</h3>
@@ -91,8 +90,14 @@
 			>Open in Maps <Externallink />
 		</a>
 
-		{#if isLoggedIn && isAdmin && !isHidden}
-			<button class="pico-background-red" on:click={handleHideBar}>Hide</button>
+		{#if isLoggedIn && isAdmin}
+			<button class:pico-background-red={bar.published} on:click={toggleHideBar}>
+				{#if bar.published}
+					Hide
+				{:else}
+					Show
+				{/if}
+			</button>
 		{/if}
 
 		{#if isLoggedIn && bar.visited_at}

@@ -49,6 +49,7 @@ export interface LocationResponse {
 	id: number
 	imageurl?: string | null
 	name: string
+	published: boolean
 	visited_at?: string | null
 }
 export interface Login {

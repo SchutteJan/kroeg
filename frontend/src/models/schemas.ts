@@ -44,6 +44,7 @@ export interface LocationResponse {
 	area_name?: string | null
 	coordinates: Point
 	description?: string | null
+	gem_ams_id?: number | null
 	google_place_id?: string | null
 	id: number
 	imageurl?: string | null

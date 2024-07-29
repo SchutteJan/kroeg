@@ -28,6 +28,7 @@ pub async fn get_bars(conn: &DbConn) -> Result<Vec<LocationResponse>, Error> {
                     "NULL",
                 ),
                 areas::name.nullable(),
+                gem_ams_id,
             ))
             .load(c)
     })
@@ -61,6 +62,7 @@ pub async fn get_bars_with_visits(
                 locations::address_line,
                 visits::visited_at.nullable(),
                 areas::name.nullable(),
+                locations::gem_ams_id,
             ))
             .load(c)
     })

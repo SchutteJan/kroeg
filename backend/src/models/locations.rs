@@ -34,6 +34,7 @@ pub struct LocationResponse {
     pub address_line: String,
     pub visited_at: Option<NaiveDateTime>,
     pub area_name: Option<String>,
+    pub gem_ams_id: Option<i64>,
 }
 
 #[derive(Deserialize, Insertable)]
@@ -96,6 +97,7 @@ impl From<&Location> for LocationResponse {
             visited_at: None,
             address_line: l.address_line.clone(),
             area_name: None,
+            gem_ams_id: l.gem_ams_id.clone(),
         }
     }
 }

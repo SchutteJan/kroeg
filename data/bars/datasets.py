@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import List
+from typing import List, Dict, Any
 
 import requests
 from requests import Session
@@ -39,8 +39,12 @@ def kroeg_credentials(env: Env) -> Credentials:
         return Credentials(email=email, password=password)
 
 
-def load_remote_kroegen_dataset(session: Session, env: Env) -> List[LocationResponse]:
-    r = session.get(kroeg_endpoint(env) + "/bars?only_published=false")
+def load_remote_kroegen_dataset(
+    session: Session, env: Env, only_published: bool = False
+) -> List[LocationResponse]:
+    r = session.get(
+        kroeg_endpoint(env) + "/bars?only_published=" + str(only_published).lower()
+    )
     r.raise_for_status()
     return [LocationResponse.from_dict(x) for x in r.json()]
 
@@ -63,4 +67,12 @@ def authenticate_api(session: Session, env: Env) -> None:
 def add_location(f: NewLocation, session: Session, env: Env) -> None:
     authenticate_api(session, env)
     r = session.post(kroeg_endpoint(env) + "/bar", json=f.to_dict())
+    r.raise_for_status()
+
+
+def update_properties_bar(
+    bar_id: int, session: Session, env: Env, properties: Dict[str, Any]
+) -> None:
+    authenticate_api(session, env)
+    r = session.patch(kroeg_endpoint(env) + f"/bar/{bar_id}", json=properties)
     r.raise_for_status()

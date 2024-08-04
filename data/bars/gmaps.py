@@ -1,5 +1,7 @@
 import math
 from typing import Tuple, Optional, Dict
+
+import requests
 from diskcache import Cache
 
 import googlemaps
@@ -8,9 +10,11 @@ import os
 cache = Cache("./gmaps_cache")
 
 
-def get_gmaps_client():
-    GMAPS_API: str = os.environ.get("GMAPS_API")
-    return googlemaps.Client(key=GMAPS_API)
+def get_gmaps_client() -> googlemaps.Client:
+    api_key = os.environ.get("GMAPS_API")
+    if not api_key:
+        raise ValueError("No Google Maps API key found")
+    return googlemaps.Client(key=api_key)
 
 
 # returns distance in meters between two lat/long points
@@ -39,6 +43,7 @@ def get_distance(a: Tuple[float, float], b: Tuple[float, float]) -> float:
     return distance
 
 
+@cache.memoize(typed=True)
 def gmaps_place_details(place_id: str) -> dict:
     gmaps = get_gmaps_client()
     return gmaps.place(place_id)
@@ -53,6 +58,26 @@ def gmaps_place_search(
 ) -> dict:
     gmaps = get_gmaps_client()
     return gmaps.places(address, location=location, language=language, type=type)
+
+
+@cache.memoize(typed=True)
+def get_url_redirect(url: str) -> str:
+    r = requests.get(url, headers={"Range": "bytes=0-0"}, allow_redirects=False)
+    r.raise_for_status()
+    return r.headers["Location"]
+
+
+def get_image_url(place_id: str) -> Optional[str]:
+    try:
+        place_details = gmaps_place_details(place_id)
+        photo_reference = place_details["result"]["photos"][0]["photo_reference"]
+    except Exception as e:
+        print(f"No photos found for {place_id}: {e}")
+        return None
+
+    # Don't want to expose the Google Maps API key, so instead we get the redirected image URL instead
+    gmaps_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=512&photo_reference={photo_reference}&key={os.environ.get("GMAPS_API")}"
+    return get_url_redirect(gmaps_url)
 
 
 def get_likeliest_place(

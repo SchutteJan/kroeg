@@ -14,6 +14,7 @@ pub async fn get_bars(only_published: bool, conn: &DbConn) -> Result<Vec<Locatio
 
     let mut query = locations
         .left_join(areas::table.on(st_contains(areas::area, coordinates)))
+        .order_by(id.asc())
         .select((
             id,
             name,
@@ -51,6 +52,7 @@ pub async fn get_bars_with_visits(
                 .and(visits::user_id.eq(user_id))),
         )
         .left_join(areas::table.on(st_contains(areas::area, locations::coordinates)))
+        .order_by(locations::id.asc())
         .select((
             locations::id,
             locations::name,

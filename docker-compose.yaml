@@ -11,6 +11,9 @@ services:
       # This key is not used in production, don't worry
       - ROCKET_SECRET_KEY=l0arkbZC8Uz48KEmeCfC3X9lmDMhoY1U6OzgUMm/pD8=
       - ROCKET_LOG_LEVEL=NORMAL
+      - ROCKET_IMG_PROXY_DOMAIN=http://localhost:8081
+      - ROCKET_IMG_PROXY_KEY=5db8176951b21345c26e4b72552657b5c5b276ccd87fa934b2b58045a31b3e7f11f8711db217983e6cf7904b2f4b2c2b641aab29e20183a3aa3ffbe6b7c8de6f
+      - ROCKET_IMG_PROXY_SALT=a81d08ada89464d3bef5ee6e65b05e1dbf33712004ab33e04279c2fa16c47f930f969c6e12ce67fc1dbc91f06aa8d519c761e2accec7bb4524a501443aa843f6
   db:
     image: postgis/postgis:15-3.3
     volumes:

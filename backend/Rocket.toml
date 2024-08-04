@@ -14,6 +14,7 @@ url = "postgres://postgres:example@localhost/webapp"
 address = "0.0.0.0"
 port = 8000
 static_file_path = "static"
+img_proxy_domain = "https://images.jan.tf"
 
 [release.databases.webapp]
 url = "postgres://postgres:example@db/webapp"

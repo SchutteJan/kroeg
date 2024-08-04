@@ -39,6 +39,13 @@
 		})
 	}
 
+	function setSrcToPlaceholder(event: Event) {
+		const img = event.target as HTMLImageElement
+		if (img.src !== placeholder) {
+			img.src = placeholder
+		}
+	}
+
 	function toggleHideBar() {
 		const hideStr = bar.published ? 'hide' : 'unhide'
 
@@ -53,7 +60,13 @@
 <article>
 	<details>
 		<summary class="bar-item">
-			<img alt={bar.name} class="bar-image" src={bar.imageurl ?? placeholder} loading="lazy" />
+			<img
+				loading="lazy"
+				alt={bar.name}
+				class="bar-image"
+				src={bar.imageurl ?? placeholder}
+				on:error={setSrcToPlaceholder}
+			/>
 			<div class="bar-content">
 				{#if !bar.published}
 					<h3><s>{bar.name}</s></h3>

@@ -16,7 +16,7 @@
 		}
 	})
 	const placeholder =
-		'https://images.jan.tf/ecmAqc89DiQEu0HlPMBcNxDFyigWMJI-xUJCNJAbklQ/fill/512/512/no/1/bG9jYWw6Ly8vYmFyLXBsYWNlaG9sZGVyLnBuZw.jpg'
+		'https://images.jan.tf/3AdpERPJX0kllHCcEVGrp6iPXEM0-Jili9_buKOsz24/rs:fit:128:128/plain/local:///bar-placeholder.png'
 
 	function visitString() {
 		if (bar.visited_at) {
@@ -53,7 +53,7 @@
 <article>
 	<details>
 		<summary class="bar-item">
-			<img alt={bar.name} class="bar-image" src={bar.imageurl ?? placeholder} />
+			<img alt={bar.name} class="bar-image" src={bar.imageurl ?? placeholder} loading="lazy" />
 			<div class="bar-content">
 				{#if !bar.published}
 					<h3><s>{bar.name}</s></h3>

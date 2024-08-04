@@ -10,15 +10,34 @@ use rocket::State;
 
 use crate::routes::{AdminUser, BasicUser};
 
+fn replace_image_url_with_proxy(
+    bars: Vec<LocationResponse>,
+    config: &Config,
+) -> Vec<LocationResponse> {
+    bars.into_iter()
+        .map(|l| {
+            let proxied_image_url = match &l.imageurl {
+                Some(image_url) => get_proxied_image_url(image_url, 300, 300, config).ok(),
+                None => None,
+            };
+            LocationResponse {
+                imageurl: proxied_image_url,
+                ..l
+            }
+        })
+        .collect()
+}
+
 #[get("/bars?<only_published>", rank = 2)]
 async fn bars(
     conn: DbConn,
     only_published: Option<bool>,
+    config: &State<Config>,
 ) -> Result<Json<Vec<LocationResponse>>, Status> {
     let bars = locations::get_bars(only_published.unwrap_or(true), &conn).await;
 
     match bars {
-        Ok(bar_list) => Ok(Json(bar_list)),
+        Ok(bar_list) => Ok(Json(replace_image_url_with_proxy(bar_list, config))),
         Err(_) => Err(Status::InternalServerError),
     }
 }
@@ -33,23 +52,7 @@ async fn visited_bars(
     let bars = locations::get_bars_with_visits(user.0, only_published.unwrap_or(true), &conn).await;
 
     match bars {
-        Ok(bar_list) => Ok(Json(
-            bar_list
-                .into_iter()
-                .map(|l| {
-                    let proxied_image_url = match &l.imageurl {
-                        Some(image_url) => {
-                            get_proxied_image_url(image_url, 300, 300, config.inner()).ok()
-                        }
-                        None => None,
-                    };
-                    LocationResponse {
-                        imageurl: proxied_image_url,
-                        ..l
-                    }
-                })
-                .collect(),
-        )),
+        Ok(bar_list) => Ok(Json(replace_image_url_with_proxy(bar_list, config))),
         Err(_) => Err(Status::InternalServerError),
     }
 }

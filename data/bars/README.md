@@ -7,6 +7,11 @@ https://www.amsterdam.nl/ondernemen/horeca/horeca-kaart/
 
 https://api.data.amsterdam.nl/dcatd/datasets/GsY50tEkoJKCGw
 
+## Fallacies
+
+Some assumptions that you might have about this data that turn out not to be true:
+
+1. When a location is no longer in the dataset, it no longer has a license
 
 
 ## Explore
@@ -39,7 +44,4 @@ jq '.features[] | select(.properties.zaak_categorie == "Onbekend") | .properties
 ```bash
 # Filter on Cafes
 jq '.features[] | select(.properties.zaak_categorie == "Café")' bars.json > cafes.json
-
-poetry run python render_template.py
-
 ```

@@ -39,6 +39,11 @@ def get_distance(a: Tuple[float, float], b: Tuple[float, float]) -> float:
     return distance
 
 
+def gmaps_place_details(place_id: str) -> dict:
+    gmaps = get_gmaps_client()
+    return gmaps.place(place_id)
+
+
 @cache.memoize(typed=True)
 def gmaps_place_search(
     address: str,

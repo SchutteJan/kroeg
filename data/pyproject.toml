@@ -1,19 +1,23 @@
 [tool.poetry]
-name = "kroeg-data"
+name = "data"
 version = "0.1.0"
 description = "Python tools for importing various data sources"
 authors = ["Jan Schutte <4732389+SchutteJan@users.noreply.github.com>"]
-package-mode = false
+packages = [
+    {include = "data", from = "../"},
+]
 
 [tool.poetry.dependencies]
 python = "^3.12"
 Jinja2 = "^3.1.4"
 googlemaps = "^4.10.0"
 diskcache = "^5.6.3"
+click = "^8.1.7"
 
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.11.0"
+types-requests = "^2.32.0.20240712"
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,9 +1,12 @@
 use diesel::result::Error;
 use kroeg::db::{locations, DbConn};
+use kroeg::img_proxy::get_proxied_image_url;
+use kroeg::models::config::Config;
 use kroeg::models::locations::{LocationResponse, NewLocation, UpdateLocation};
 use kroeg::models::DeleteRequest;
 use rocket::http::Status;
 use rocket::serde::json::Json;
+use rocket::State;
 
 use crate::routes::{AdminUser, BasicUser};
 
@@ -24,16 +27,32 @@ async fn bars(
 async fn visited_bars(
     user: BasicUser,
     only_published: Option<bool>,
+    config: &State<Config>,
     conn: DbConn,
 ) -> Result<Json<Vec<LocationResponse>>, Status> {
     let bars = locations::get_bars_with_visits(user.0, only_published.unwrap_or(true), &conn).await;
 
     match bars {
-        Ok(bar_list) => Ok(Json(bar_list)),
+        Ok(bar_list) => Ok(Json(
+            bar_list
+                .into_iter()
+                .map(|l| {
+                    let proxied_image_url = match &l.imageurl {
+                        Some(image_url) => {
+                            get_proxied_image_url(image_url, 300, 300, config.inner()).ok()
+                        }
+                        None => None,
+                    };
+                    LocationResponse {
+                        imageurl: proxied_image_url,
+                        ..l
+                    }
+                })
+                .collect(),
+        )),
         Err(_) => Err(Status::InternalServerError),
     }
 }
-
 #[post("/bar", data = "<bar>")]
 async fn add_bar(
     conn: DbConn,

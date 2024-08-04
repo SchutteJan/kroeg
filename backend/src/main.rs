@@ -7,10 +7,11 @@ use std::path::Path;
 
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use kroeg::db::DbConn;
+use kroeg::models::config::Config;
 use rocket::fairing::AdHoc;
 use rocket::fs::{FileServer, NamedFile};
 use rocket::{Build, Rocket, State};
-use serde::Deserialize;
+
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
 async fn run_migrations(rocket: Rocket<Build>) -> Result<Rocket<Build>, Rocket<Build>> {
@@ -23,12 +24,6 @@ async fn run_migrations(rocket: Rocket<Build>) -> Result<Rocket<Build>, Rocket<B
         }
     })
     .await
-}
-
-#[derive(Deserialize)]
-#[serde(crate = "rocket::serde")]
-struct Config {
-    static_file_path: String,
 }
 
 #[get("/<_..>", rank = 1000)]

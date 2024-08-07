@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '@picocss/pico'
-	import '@picocss/pico/css/pico.colors.css'
 	import '$lib/pico-settings.css'
 	import { user } from '$lib/stores'
 	import ThemeSwitcher from '$lib/ThemeSwitcher.svelte'

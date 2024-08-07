@@ -1,3 +1,9 @@
 :root {
 	--pico-spacing: 0.5rem;
+	/* We only include the colors we actually want to use to reduce the amount of render-blocking CSS
+		https://picocss.com/docs/colors
+	 */
+	--pico-color-red-400: #f06048;
+	--pico-color-green-400: #47a417;
+	--pico-color-zinc-700: #424751;
 }

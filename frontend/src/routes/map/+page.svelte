@@ -19,6 +19,10 @@
 				onVisitCallback: () => {
 					layer._path.style.stroke = GREEN
 					layer._path.style.fill = GREEN
+				},
+				onDeleteVisitCallback: () => {
+					layer._path.style.stroke = RED
+					layer._path.style.fill = RED
 				}
 			}
 		})

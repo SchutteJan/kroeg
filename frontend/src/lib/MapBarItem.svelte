@@ -2,10 +2,11 @@
 	import type { LocationResponse, WhoResponse } from '../models/schemas'
 	import { user } from '$lib/stores'
 	import Checkmark from './Checkmark.svelte'
-	import { visitBar } from '../api/bars'
+	import { visitBar, deleteVisit } from '../api/bars'
 
 	export let bar: LocationResponse
 	export let onVisitCallback: CallableFunction
+	export let onDeleteVisitCallback: CallableFunction
 
 	let isLoggedIn: boolean = false
 
@@ -13,11 +14,16 @@
 		isLoggedIn = value !== undefined
 	})
 
-	function handleVisitBar() {
-		if (bar.visited_at) {
-			// TODO: Remove visit
-			return
+	function handleDeleteBarVisit() {
+		if (confirm(`Are you sure you want to remove your visit to ${bar.name}?`)) {
+			deleteVisit(bar.id).then(() => {
+				bar.visited_at = null
+				onDeleteVisitCallback()
+			})
 		}
+	}
+
+	function handleVisitBar() {
 		visitBar(bar.id).then(() => {
 			bar.visited_at = new Date().toISOString()
 			onVisitCallback()
@@ -32,7 +38,9 @@
 	{#if isLoggedIn}
 		<div>
 			{#if bar.visited_at}
-				<span class="checkmark"><Checkmark /></span>
+				<button on:click={handleDeleteBarVisit} class="hidden-button"
+					><span class="checkmark"><Checkmark /></span></button
+				>
 			{:else}
 				<button on:click={handleVisitBar} class="visit-button outline">Check in</button>
 			{/if}
@@ -52,5 +60,10 @@
 	}
 	.content {
 		text-align: center;
+	}
+	.hidden-button {
+		all: unset;
+		display: inline-block;
+		cursor: pointer;
 	}
 </style>

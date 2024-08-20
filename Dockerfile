@@ -25,7 +25,7 @@ FROM debian:12.6-slim
 WORKDIR /opt/kroeg
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libpq5=15.6-0+deb12u1 \
+    && apt-get install -y --no-install-recommends libpq5=15.* \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build-backend /home/app/target/release/server server

@@ -64,16 +64,14 @@
 			<thead>
 				<tr>
 					<th>Area</th>
-					<th>Total</th>
-					<th>Visits</th>
+					<th>Visits/Total</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each zipVistsByArea(visitStats.total_bars_by_area, visitStats.bar_visits_by_area).entries() as [name, stat]}
 					<tr>
 						<td>{name}</td>
-						<td>{stat.total}</td>
-						<td>{stat.visited}</td>
+						<td>{stat.visited}/{stat.total}</td>
 					</tr>
 				{/each}
 			</tbody>

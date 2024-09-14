@@ -1,41 +1,7 @@
 # Kroegen
 Web app to keep track of all _kroegen_ you've been to.
 
-## TODO
-
-MVP:
-- Implement session based login using this example: https://github.com/SergioBenitez/Rocket/tree/master/examples/cookies
-  - [x] Implement rocket logic for keeping track of sessions and putting routes behind login
-  - [x] Implement db models for user management
-  - [x] Implement simple RBAC to differentiate admins and users
-  - [x] Frontend login/logout pages
-  - [x] Frontend register page
-  - [x] Page with users account details
-- [x] Determine how SPA routes and api routes should work together (or: how to serve the frontend and api together)
-- [x] Allow users to keep track of visited bars
-  - [x] db models for visits
-  - [x] API routes for adding visits
-  - [x] API routes for querying visited bars
-  - [x] Frontend page for adding and viewing visits
-  - [x] Stats page for users to see how many bars they've visited
-- [ ] Allow users to search for a bar (frontend only for now?)
-- [ ] CSRF on all POST requests
-
-Issues:
-- The api never returns a 404, it will always fall back to the 200.html page
-  - Example: `curl http://localhost:8080/session/doesnotexist`
-  - Solution: nest api routes under `/api` and don't use catch_all route for these routes
-
-Improvements:
-- Use `Forms` for data input instead of `Json<T>` in order to use the `FromForm` macros and validations
-- Add "updated_at", "created_at" fields to all tables
-- Factor out database queries from the routes into a separate modules
-- Use https://crates.io/crates/rocket_okapi to generate OpenAPI spec
-- See if switching to https://github.com/launchbadge/sqlx is nice because managing diesel orm types is a pain
-- Show errors in the UI using toast notifications
-
-Reading:
-- Learn from this example repo: https://github.com/TaeyoonKwon/rust-rocket-sample
+[kroeg.jan.tf](https://kroeg.jan.tf)
 
 ## System requirements
 
@@ -54,19 +20,39 @@ rustup toolchain install nightly
 
 ## Backend
 
-Rust webserver:
+In order to run the webserver, you will need to have the postgres database setup and have the imgproxy service running.
+Both can be started using docker-compose:
+```bash
+docker compose up db imgproxy -d
+```
+
+You will need to manually create the `webapp` database in Postgres the first time:
+```bash
+docker compose exec db psql -U postgres
+
+postgres=# CREATE DATABASE webapp;
+```
+
+Diesel cli is needed to generate new database migrations:
+```bash
+cargo install diesel_cli --no-default-features --features postgres
+export DATABASE_URL=postgres://postgres:example@localhost/webapp
+diesel setup
+```
+
+All database migrations are applied automatically on webserver start.
 ```bash
 cd backend/
 cargo run
 ```
 
-Diesel ORM:
-```bash
-cargo install diesel_cli --no-default-features --features postgres
-export DATABASE_URL=postgres://postgres:example@localhost/webapp
-diesel setup  # Initialize the database in postgres
-```
+Next up is creating the local default user, the request to create this user can be found in [backend/requests/session.http](./backend/requests/session.http).
 
+Then you'll have to upgrade this account to an admin:
+```bash
+docker compose exec db psql -U postgres -d webapp
+webapp=# UPDATE users SET role = 'admin' WHERE id = '1';
+```
 
 ## Frontend
 
@@ -76,8 +62,33 @@ cd backend/
 cargo build --bin export-schemas
 ```
 
-Build the frontend
+Build the frontend:
 ```bash
 cd frontend/
-npm run dev
+npm run schemas
+npm run build
 ```
+
+> [!NOTE]
+> There are some pending improvements for the local setup, like making the dev server usable using `npm run dev`
+> and not hardcoding the api url in [frontend/api/base.ts](./frontend/api/base.ts)
+
+
+## Future work
+
+### Features
+- Password recovery
+- Improve data pipeline, there are still some kroegen missing due to them being marked as restaurants in the dataset from Gemeente Amsterdam.
+- Search for a bar, simple filters for finding a bar
+- CSRF on POST requests
+- Show errors in the UI using toast notifications
+
+### Issues
+- The api never returns a 404, it will always fall back to the 200.html page
+  - Example: `curl http://localhost:8080/session/doesnotexist`
+
+### General Improvements
+- Improve local setup, setting up initial dataset and a working frontend development server
+- Use `Forms` for data input instead of `Json<T>` in order to use the `FromForm` request guards
+- Add "updated_at", "created_at" fields to all tables
+- Use [rocket_okapi](https://crates.io/crates/rocket_okapi) to generate OpenAPI spec of the api

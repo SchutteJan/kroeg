@@ -71,7 +71,7 @@ npm run build
 
 > [!NOTE]
 > There are some pending improvements for the local setup, like making the dev server usable using `npm run dev`
-> and not hardcoding the api url in [frontend/api/base.ts](./frontend/api/base.ts)
+> and not hardcoding the api url in [frontend/src/api/base.ts](./frontend/src/api/base.ts)
 
 
 ## Future work

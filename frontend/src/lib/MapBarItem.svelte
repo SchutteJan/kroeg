@@ -3,6 +3,7 @@
 	import { user } from '$lib/stores'
 	import Checkmark from './Checkmark.svelte'
 	import { visitBar, deleteVisit } from '../api/bars'
+	import Externallink from './Externallink.svelte'
 
 	export let bar: LocationResponse
 	export let onVisitCallback: CallableFunction
@@ -35,8 +36,17 @@
 	<h4 class="title">{bar.name}</h4>
 	<p class="area">{bar.area_name}</p>
 
-	{#if isLoggedIn}
-		<div>
+	<div>
+		<a
+			class="maps-link"
+			target="_blank"
+			href="https://www.google.com/maps/search/?api=1&query={encodeURIComponent(
+				bar.address_line
+			)}&query_place_id={bar.google_place_id}"
+			>Maps <Externallink />
+		</a>
+
+		{#if isLoggedIn}
 			{#if bar.visited_at}
 				<button on:click={handleDeleteBarVisit} class="hidden-button"
 					><span class="checkmark"><Checkmark /></span></button
@@ -44,8 +54,8 @@
 			{:else}
 				<button on:click={handleVisitBar} class="visit-button outline">Check in</button>
 			{/if}
-		</div>
-	{/if}
+		{/if}
+	</div>
 </div>
 
 <style>
@@ -65,5 +75,9 @@
 		all: unset;
 		display: inline-block;
 		cursor: pointer;
+		vertical-align: middle;
+	}
+	.maps-link {
+		font-size: 12pt;
 	}
 </style>

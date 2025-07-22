@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte'
 	import type { VisitStats, WhoResponse, LocationResponse } from '../../models/schemas'
 	import { get_bar_visit_stats, logout } from '../../api/session'
-	import { get_bars } from '../../api/bars'
+	import { deleteVisit, get_bars } from '../../api/bars'
 	import { localDate } from '$lib/time'
 	import { toGmapsUrl } from '$lib/gmaps'
 
@@ -20,6 +20,15 @@
 		logout().then(() => {
 			user.set(undefined)
 		})
+	}
+
+	async function handleDeleteVisit(bar: LocationResponse) {
+		if (confirm(`Are you sure you want to remove your visit to ${bar.name}?`)) {
+			await deleteVisit(bar.id)
+			bar.visited_at = null
+			// remove from recentVisit list
+			recentVisits = recentVisits.filter((b) => b.id !== bar.id)
+		}
 	}
 
 	interface AreaStat {
@@ -113,6 +122,7 @@
 					<th>Bar Name</th>
 					<th>Area</th>
 					<th>Visited On</th>
+					<th>Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -121,6 +131,11 @@
 						<td><a href={toGmapsUrl(bar)}>{bar.name}</a></td>
 						<td>{bar.area_name || 'Unknown'}</td>
 						<td>{localDate(bar.visited_at ?? '')}</td>
+						<td>
+							<button class="outline contrast" on:click={() => handleDeleteVisit(bar)}
+								>Delete</button
+							>
+						</td>
 					</tr>
 				{/each}
 				{#if recentVisitOverflow > 0}

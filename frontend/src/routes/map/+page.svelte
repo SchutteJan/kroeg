@@ -74,11 +74,17 @@
 			if (locationmarkerRadius) {
 				map.removeLayer(locationmarkerRadius)
 			}
-			locationMarkerDot = L.circle(e.latlng, { radius: 3, color: BLUE, fillOpacity: 1 }).addTo(map)
+			locationMarkerDot = L.circle(e.latlng, {
+				radius: 3,
+				color: BLUE,
+				fillOpacity: 1,
+				interactive: false
+			}).addTo(map)
 			locationmarkerRadius = L.circle(e.latlng, {
 				radius: e.accuracy,
 				color: BLUE,
-				fillOpacity: 0.1
+				fillOpacity: 0.1,
+				interactive: false
 			}).addTo(map)
 		}
 		map.on('locationfound', onLocationFound)

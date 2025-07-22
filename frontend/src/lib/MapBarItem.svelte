@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { LocationResponse, WhoResponse } from '../models/schemas'
 	import { user } from '$lib/stores'
+	import { toGmapsUrl } from '$lib/gmaps'
 	import Checkmark from './Checkmark.svelte'
 	import { visitBar, deleteVisit } from '../api/bars'
 	import Externallink from './Externallink.svelte'
@@ -37,14 +38,7 @@
 	<p class="area">{bar.area_name}</p>
 
 	<div>
-		<a
-			class="maps-link"
-			target="_blank"
-			href="https://www.google.com/maps/search/?api=1&query={encodeURIComponent(
-				bar.address_line
-			)}&query_place_id={bar.google_place_id}"
-			>Maps <Externallink />
-		</a>
+		<a class="maps-link" target="_blank" href={toGmapsUrl(bar)}>Maps <Externallink /> </a>
 
 		{#if isLoggedIn}
 			{#if bar.visited_at}
